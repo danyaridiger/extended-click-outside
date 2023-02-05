@@ -1,6 +1,6 @@
 # Patch notes
 
-Current `extended-click-outside` version: **1.0.3**
+Current `extended-click-outside` version: **1.1.0**
 
 ***
 
@@ -35,3 +35,9 @@ Current `extended-click-outside` version: **1.0.3**
 ### 1.0.3 (2022-02-05)
 
 * Replacing nullish coalescing operators with ternary operators.
+
+### 1.1.0 (2022-02-05)
+
+* Adding "@babel/plugin-proposal-class-properties" dev-dependency.
+* Adding "@babel/plugin-transform-classes" dev-dependency.
+* Adding new plugins to rollup.config.mjs file.

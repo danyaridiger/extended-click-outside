@@ -1,6 +1,6 @@
 {
   "name": "extended-click-outside",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Extended click outside utility for web-applications",
   "keywords": [
     "click",
@@ -30,7 +30,9 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/plugin-transform-arrow-functions": "^7.20.7",
+    "@babel/plugin-transform-classes": "^7.20.7",
     "@babel/preset-env": "^7.20.2",
     "@rollup/plugin-babel": "^6.0.3",
     "@testing-library/user-event": "^14.4.3",

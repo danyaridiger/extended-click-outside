@@ -20,7 +20,12 @@ export default [
     plugins: [
       babel({
         exclude: ["./node_modules/**", "./qa/**"],
-        plugins: ["@babel/plugin-transform-arrow-functions", "transform-imports"],
+        plugins: [
+          "@babel/plugin-transform-arrow-functions",
+          "@babel/plugin-proposal-class-properties",
+          "@babel/plugin-transform-classes",
+          "transform-imports"
+        ],
       }),
     ]
   },

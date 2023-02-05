@@ -1,3 +1,54 @@
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor);
+  }
+}
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  Object.defineProperty(Constructor, "prototype", {
+    writable: false
+  });
+  return Constructor;
+}
+function _defineProperty(obj, key, value) {
+  key = _toPropertyKey(key);
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+  return obj;
+}
+function _toPrimitive(input, hint) {
+  if (typeof input !== "object" || input === null) return input;
+  var prim = input[Symbol.toPrimitive];
+  if (prim !== undefined) {
+    var res = prim.call(input, hint || "default");
+    if (typeof res !== "object") return res;
+    throw new TypeError("@@toPrimitive must return a primitive value.");
+  }
+  return (hint === "string" ? String : Number)(input);
+}
+function _toPropertyKey(arg) {
+  var key = _toPrimitive(arg, "string");
+  return typeof key === "symbol" ? key : String(key);
+}
+
 /**
  * @overview Console warnings
  */
@@ -167,105 +218,120 @@ var frameworks = (function (element) {
  * @class
  * @version 1.0.3
  */
-class ExtendedClickOutside {
-  _clickName = !document.ontouchstart ? "click" : "touchstart";
-  _outsideListeners = new Map();
-
-  /**
-   * Initializes ExtendedClickOutside listener
-   * @method
-   * @param {HTMLElement} element - ExtendedClickOutside root element
-   * @param {Function} listener - ExtendedClickOutside listener
-   * @param {Object} config - configuration
-   */
-  init(element, listener, config = {}) {
-    let handler;
-    const blockKeys = config.blockKeys;
-    const capture = config.capture;
-    const once = config.once;
-    const selfOnly = config.selfOnly;
-    const useWarnings = config.useWarnings;
-    if (!element || typeof element !== "object") {
-      useWarnings && console.warn(invalidElement);
-      return;
-    }
-    if (!listener || typeof listener !== "function") {
-      useWarnings && console.warn(invalidListener);
-      return;
-    }
-    if (!window || !document || !document.documentElement) {
-      useWarnings && console.warn(outsideDocument);
-      return;
-    }
-    if (this._outsideListeners.has(element)) {
-      useWarnings && console.warn(alreadyHasListener);
-      return;
-    }
-    if (!(element instanceof HTMLElement)) {
-      element = frameworks(element);
-      if (!element) {
+let ExtendedClickOutside = /*#__PURE__*/function () {
+  function ExtendedClickOutside() {
+    _classCallCheck(this, ExtendedClickOutside);
+    _defineProperty(this, "_clickName", !document.ontouchstart ? "click" : "touchstart");
+    _defineProperty(this, "_outsideListeners", new Map());
+  }
+  _createClass(ExtendedClickOutside, [{
+    key: "init",
+    value:
+    /**
+     * Initializes ExtendedClickOutside listener
+     * @method
+     * @param {HTMLElement} element - ExtendedClickOutside root element
+     * @param {Function} listener - ExtendedClickOutside listener
+     * @param {Object} config - configuration
+     */
+    function init(element, listener, config = {}) {
+      let handler;
+      const blockKeys = config.blockKeys;
+      const capture = config.capture;
+      const once = config.once;
+      const selfOnly = config.selfOnly;
+      const useWarnings = config.useWarnings;
+      if (!element || typeof element !== "object") {
         useWarnings && console.warn(invalidElement);
         return;
       }
+      if (!listener || typeof listener !== "function") {
+        useWarnings && console.warn(invalidListener);
+        return;
+      }
+      if (!window || !document || !document.documentElement) {
+        useWarnings && console.warn(outsideDocument);
+        return;
+      }
+      if (this._outsideListeners.has(element)) {
+        useWarnings && console.warn(alreadyHasListener);
+        return;
+      }
+      if (!(element instanceof HTMLElement)) {
+        element = frameworks(element);
+        if (!element) {
+          useWarnings && console.warn(invalidElement);
+          return;
+        }
+      }
+      if (once) {
+        handler = setListenerOnce(element, listener, capture, selfOnly, blockKeys, this._clickName);
+      } else {
+        handler = setListener(element, listener, capture, selfOnly, blockKeys, this._clickName);
+      }
+      this._outsideListeners.set(element, handler);
     }
-    if (once) {
-      handler = setListenerOnce(element, listener, capture, selfOnly, blockKeys, this._clickName);
-    } else {
-      handler = setListener(element, listener, capture, selfOnly, blockKeys, this._clickName);
-    }
-    this._outsideListeners.set(element, handler);
-  }
 
-  /**
-   * Removes ExtendedClickOutside listener
-   * @method
-   * @param {HTMLElement} element - ExtendedClickOutside root element
-   * @param {boolean} useWarnings - console warnings flag
-   */
-  remove(element, useWarnings = false) {
-    if (!this._outsideListeners.has(element)) {
-      useWarnings && console.warn(missingElement);
-      return;
-    }
-    const handler = this._outsideListeners.get(element);
-    document.documentElement.removeEventListener("click", handler);
-    this._outsideListeners.delete(element);
-  }
-
-  /**
-   * Removes all ExtendedClickOutside listeners
-   * @method
-   */
-  removeAllListeners() {
-    for (let handler of this._outsideListeners.values()) {
+    /**
+     * Removes ExtendedClickOutside listener
+     * @method
+     * @param {HTMLElement} element - ExtendedClickOutside root element
+     * @param {boolean} useWarnings - console warnings flag
+     */
+  }, {
+    key: "remove",
+    value: function remove(element, useWarnings = false) {
+      if (!this._outsideListeners.has(element)) {
+        useWarnings && console.warn(missingElement);
+        return;
+      }
+      const handler = this._outsideListeners.get(element);
       document.documentElement.removeEventListener("click", handler);
+      this._outsideListeners.delete(element);
     }
-    this._outsideListeners.clear();
-  }
 
-  /**
-   * Writes root ExtendedClickOutside elements to snapshots list
-   * @method
-   * @returns {Array} snapshots
-   */
-  getCurrentSnapshots() {
-    let output = [];
-    for (let element of this._outsideListeners.keys()) {
-      const snapshot = element.outerHTML.match(/^(<.+?>)/is)[0];
-      output.push(snapshot);
+    /**
+     * Removes all ExtendedClickOutside listeners
+     * @method
+     */
+  }, {
+    key: "removeAllListeners",
+    value: function removeAllListeners() {
+      for (let handler of this._outsideListeners.values()) {
+        document.documentElement.removeEventListener("click", handler);
+      }
+      this._outsideListeners.clear();
     }
-    return output;
-  }
 
-  /**
-   * Writes current ExtendedClickOutside listeners count
-   * @method
-   * @returns {number} count
-   */
-  getClickOutsidesCount() {
-    return this._outsideListeners.size;
-  }
-}
+    /**
+     * Writes root ExtendedClickOutside elements to snapshots list
+     * @method
+     * @returns {Array} snapshots
+     */
+  }, {
+    key: "getCurrentSnapshots",
+    value: function getCurrentSnapshots() {
+      let output = [];
+      for (let element of this._outsideListeners.keys()) {
+        const snapshot = element.outerHTML.match(/^(<.+?>)/is)[0];
+        output.push(snapshot);
+      }
+      return output;
+    }
+
+    /**
+     * Writes current ExtendedClickOutside listeners count
+     * @method
+     * @returns {number} count
+     */
+  }, {
+    key: "getClickOutsidesCount",
+    value: function getClickOutsidesCount() {
+      return this._outsideListeners.size;
+    }
+  }]);
+  return ExtendedClickOutside;
+}();
 
 export { ExtendedClickOutside as default };
 //# sourceMappingURL=mjs.js.map
