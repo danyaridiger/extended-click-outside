@@ -1,0 +1,31 @@
+{
+  "name": "extended-click-outside",
+  "version": "0.0.1",
+  "description": "Extended click outside utility for web-applications",
+  "keywords": [
+    "click",
+    "outside",
+    "away",
+    "extended"
+  ],
+  "typings": "types/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/danyaridiger/extended-click-outside.git"
+  },
+  "author": "Ridiger Daniil Dmitrievich <extendedmultiselect@yandex.ru>",
+  "license": "MIT",
+  "scripts": {
+    "test:unit": "jest",
+    "lint": "npx eslint ."
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.12",
+    "@babel/preset-env": "^7.20.2",
+    "@testing-library/user-event": "^14.4.3",
+    "babel-jest": "^29.4.1",
+    "eslint": "^8.33.0",
+    "jest": "^29.4.1",
+    "jest-environment-jsdom": "^29.4.1"
+  }
+}
