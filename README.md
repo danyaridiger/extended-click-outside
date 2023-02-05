@@ -1,4 +1,4 @@
-# extended-click-outside v1.0.0
+# extended-click-outside v1.0.1
 
 ***
 

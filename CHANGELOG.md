@@ -1,6 +1,6 @@
 # Patch notes
 
-Current `extended-click-outside` version: **1.0.0**
+Current `extended-click-outside` version: **1.0.1**
 
 ***
 
@@ -20,6 +20,10 @@ Current `extended-click-outside` version: **1.0.0**
 * Adding "rollup" dev-dependency.
 * Adding "rollup-plugin-dts" dev-dependency
 * Adding rollup.config.mjs file as build configuration.
-* Adding some new keywords in "package.json" file.
+* Adding some new keywords in package.json file.
 * Adding "dist" directory for current builds of package.
-* Сhanging the location of types in "package.json" file.
+* Сhanging the location of types in package.json file.
+
+### 1.0.1 (2022-02-05)
+
+* Removal of "/dist" build directory from .gitignore and .npmignore files.
