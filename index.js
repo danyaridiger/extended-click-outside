@@ -17,7 +17,7 @@ import frameworks from "./utils/frameworks";
  * ExtendedClickOutside instance constructor
  * @author Ridiger Daniil Dmitrievich, 2023
  * @class
- * @version 0.0.2
+ * @version 1.0.0
  */
 export default class ExtendedClickOutside {
 
