@@ -1,6 +1,6 @@
 # Patch notes
 
-Current `extended-click-outside` version: **1.0.1**
+Current `extended-click-outside` version: **1.0.2**
 
 ***
 
@@ -27,3 +27,7 @@ Current `extended-click-outside` version: **1.0.1**
 ### 1.0.1 (2022-02-05)
 
 * Removal of "/dist" build directory from .gitignore and .npmignore files.
+
+### 1.0.2 (2022-02-05)
+
+* Adding main and module files location to package.json file.

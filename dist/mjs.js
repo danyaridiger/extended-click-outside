@@ -165,7 +165,7 @@ var frameworks = (function (element) {
  * ExtendedClickOutside instance constructor
  * @author Ridiger Daniil Dmitrievich, 2023
  * @class
- * @version 0.0.2
+ * @version 1.0.2
  */
 class ExtendedClickOutside {
   _clickName = !document.ontouchstart ? "click" : "touchstart";

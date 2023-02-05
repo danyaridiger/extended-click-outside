@@ -1,6 +1,6 @@
 {
   "name": "extended-click-outside",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Extended click outside utility for web-applications",
   "keywords": [
     "click",
@@ -15,6 +15,8 @@
   "files": [
     "dist"
   ],
+  "main": "dist/cjs.js",
+  "module": "dist/mjs.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/danyaridiger/extended-click-outside.git"
