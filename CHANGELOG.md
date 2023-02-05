@@ -1,6 +1,6 @@
 # Patch notes
 
-Current `extended-click-outside` version: **1.0.2**
+Current `extended-click-outside` version: **1.0.3**
 
 ***
 
@@ -31,3 +31,7 @@ Current `extended-click-outside` version: **1.0.2**
 ### 1.0.2 (2022-02-05)
 
 * Adding main and module files location to package.json file.
+
+### 1.0.3 (2022-02-05)
+
+* Replacing nullish coalescing operators with ternary operators.

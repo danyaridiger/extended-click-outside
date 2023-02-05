@@ -71,7 +71,7 @@ const setListener = function (element, listener, capture, selfOnly, blockKeys, e
     if (blockByKeys(event, blockKeys)) return;
     listener();
   };
-  document.documentElement.addEventListener(eventName, handler, capture ?? false);
+  document.documentElement.addEventListener(eventName, handler, capture ? capture : false);
   return handler;
 };
 
@@ -95,7 +95,7 @@ const setListenerOnce = function (element, listener, capture, selfOnly, blockKey
     listener();
     document.documentElement.removeEventListener(eventName, handler);
   };
-  document.documentElement.addEventListener(eventName, handler, capture ?? false);
+  document.documentElement.addEventListener(eventName, handler, capture ? capture : false);
   return handler;
 };
 
@@ -169,7 +169,7 @@ var frameworks = (function (element) {
  * ExtendedClickOutside instance constructor
  * @author Ridiger Daniil Dmitrievich, 2023
  * @class
- * @version 1.0.2
+ * @version 1.0.3
  */
 class ExtendedClickOutside {
   _clickName = !document.ontouchstart ? "click" : "touchstart";
