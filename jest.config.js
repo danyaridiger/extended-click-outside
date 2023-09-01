@@ -1,7 +1,7 @@
 module.exports = {
   expand: true,
   displayName: {
-    name: "extended-click-outside 1.1.0",
+    name: "extended-click-outside",
     color: "bgGreen",
   },
   sandboxInjectedGlobals: [],

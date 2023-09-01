@@ -25,7 +25,7 @@ const isParentElement = (element, target) => {
  * listener by special keys combination
  * @function
  * @param {MouseEvent} event - MouseEvent instance
- * @param {Array} blockKeys - list of keys
+ * @param {Array} [blockKeys] - list of keys
  * @returns {boolean} restriction
  */
 const blockByKeys = (event, blockKeys) => {
@@ -71,7 +71,7 @@ export const setListener = (
     listener();
   };
 
-  document.documentElement.addEventListener(eventName, handler, capture ? capture : false);
+  document.documentElement.addEventListener(eventName, handler, capture ?? false);
 
   return handler;
 };
@@ -106,7 +106,7 @@ export const setListenerOnce = (
     document.documentElement.removeEventListener(eventName, handler);
   };
 
-  document.documentElement.addEventListener(eventName, handler, capture ? capture : false);
+  document.documentElement.addEventListener(eventName, handler, capture ?? false);
 
   return handler;
 };

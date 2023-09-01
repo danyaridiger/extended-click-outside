@@ -17,7 +17,7 @@ import frameworks from "./utils/frameworks";
  * ExtendedClickOutside instance constructor
  * @author Ridiger Daniil Dmitrievich, 2023
  * @class
- * @version 1.1.0
+ * @version 1.1.1
  */
 export default class ExtendedClickOutside {
 
@@ -29,7 +29,7 @@ export default class ExtendedClickOutside {
    * @method
    * @param {HTMLElement} element - ExtendedClickOutside root element
    * @param {Function} listener - ExtendedClickOutside listener
-   * @param {Object} config - configuration
+   * @param {Object} [config={}] - configuration
    */
   init(element, listener, config = {}) {
     let handler;
@@ -94,7 +94,7 @@ export default class ExtendedClickOutside {
    * Removes ExtendedClickOutside listener
    * @method
    * @param {HTMLElement} element - ExtendedClickOutside root element
-   * @param {boolean} useWarnings - console warnings flag
+   * @param {boolean} [useWarnings=false] - console warnings flag
    */
   remove(element, useWarnings = false) {
     if (!this._outsideListeners.has(element)) {

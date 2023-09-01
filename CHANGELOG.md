@@ -1,6 +1,6 @@
 # Patch notes
 
-Current `extended-click-outside` version: **1.1.0**
+Current `extended-click-outside` version: **1.1.1**
 
 ***
 
@@ -41,3 +41,7 @@ Current `extended-click-outside` version: **1.1.0**
 * Adding "@babel/plugin-proposal-class-properties" dev-dependency.
 * Adding "@babel/plugin-transform-classes" dev-dependency.
 * Adding new plugins to rollup.config.mjs file.
+
+### 1.1.1 (2023-09-01)
+
+* Updating dependencies and dev-dependencies.

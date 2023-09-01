@@ -85,7 +85,7 @@ const isParentElement = function (element, target) {
  * listener by special keys combination
  * @function
  * @param {MouseEvent} event - MouseEvent instance
- * @param {Array} blockKeys - list of keys
+ * @param {Array} [blockKeys] - list of keys
  * @returns {boolean} restriction
  */
 const blockByKeys = function (event, blockKeys) {
@@ -122,7 +122,7 @@ const setListener = function (element, listener, capture, selfOnly, blockKeys, e
     if (blockByKeys(event, blockKeys)) return;
     listener();
   };
-  document.documentElement.addEventListener(eventName, handler, capture ? capture : false);
+  document.documentElement.addEventListener(eventName, handler, capture ?? false);
   return handler;
 };
 
@@ -146,7 +146,7 @@ const setListenerOnce = function (element, listener, capture, selfOnly, blockKey
     listener();
     document.documentElement.removeEventListener(eventName, handler);
   };
-  document.documentElement.addEventListener(eventName, handler, capture ? capture : false);
+  document.documentElement.addEventListener(eventName, handler, capture ?? false);
   return handler;
 };
 
@@ -220,7 +220,7 @@ var frameworks = (function (element) {
  * ExtendedClickOutside instance constructor
  * @author Ridiger Daniil Dmitrievich, 2023
  * @class
- * @version 1.0.3
+ * @version 1.1.1
  */
 let ExtendedClickOutside = /*#__PURE__*/function () {
   function ExtendedClickOutside() {
@@ -236,7 +236,7 @@ let ExtendedClickOutside = /*#__PURE__*/function () {
      * @method
      * @param {HTMLElement} element - ExtendedClickOutside root element
      * @param {Function} listener - ExtendedClickOutside listener
-     * @param {Object} config - configuration
+     * @param {Object} [config={}] - configuration
      */
     function init(element, listener, config = {}) {
       let handler;
@@ -280,7 +280,7 @@ let ExtendedClickOutside = /*#__PURE__*/function () {
      * Removes ExtendedClickOutside listener
      * @method
      * @param {HTMLElement} element - ExtendedClickOutside root element
-     * @param {boolean} useWarnings - console warnings flag
+     * @param {boolean} [useWarnings=false] - console warnings flag
      */
   }, {
     key: "remove",
