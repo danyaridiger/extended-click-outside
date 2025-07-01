@@ -1,9 +1,9 @@
 import {
-  alreadyHasListener,
-  invalidElement,
-  invalidListener,
-  missingElement,
-  outsideDocument,
+  ALREADY_HAS_LISTENER,
+  INVALID_ELEMENT,
+  INVALID_LISTENER,
+  MISSING_ELEMENT,
+  OUTSIDE_OF_DOCUMENT,
 } from "./sets/warnings";
 
 import { 
@@ -11,13 +11,11 @@ import {
   setListenerOnce,
 } from "./utils/listeners";
 
-import frameworks from "./utils/frameworks";
-
 /**
  * ExtendedClickOutside instance constructor
  * @author Ridiger Daniil Dmitrievich, 2023
  * @class
- * @version 1.1.1
+ * @version 2.0.0
  */
 export default class ExtendedClickOutside {
 
@@ -33,38 +31,41 @@ export default class ExtendedClickOutside {
    */
   init(element, listener, config = {}) {
     let handler;
-    const blockKeys = config.blockKeys;
-    const capture = config.capture;
-    const once = config.once;
-    const selfOnly = config.selfOnly;
-    const useWarnings = config.useWarnings;
+    const blockKeys = config.blockKeys || [];
+    const capture = config.capture || false;
+    const passive = config.passive || false;
+    const once = config.once || false;
+    const selfOnly = config.selfOnly || false;
+    const useWarnings = config.useWarnings || false;
     
     if (!element || typeof element !== "object") {
-      useWarnings && console.warn(invalidElement);
+      useWarnings && console.warn(INVALID_ELEMENT);
+
       return;
     }
 
     if (!listener || typeof listener !== "function") {
-      useWarnings && console.warn(invalidListener);
+      useWarnings && console.warn(INVALID_LISTENER);
+
       return;
     }
 
     if (!window || !document || !document.documentElement) {
-      useWarnings && console.warn(outsideDocument);
+      useWarnings && console.warn(OUTSIDE_OF_DOCUMENT);
+
       return;
     }
 
     if (this._outsideListeners.has(element)) {
-      useWarnings && console.warn(alreadyHasListener);
+      useWarnings && console.warn(ALREADY_HAS_LISTENER);
+
       return;
     }
 
-    if (!(element instanceof HTMLElement)) {
-      element = frameworks(element);
-      if (!element) {
-        useWarnings && console.warn(invalidElement);
-        return;
-      }
+    if (!element || !(element instanceof HTMLElement)) {
+      useWarnings && console.warn(INVALID_ELEMENT);
+
+      return;
     }
 
     if (once) {
@@ -72,22 +73,31 @@ export default class ExtendedClickOutside {
         element,
         listener,
         capture,
+        passive,
         selfOnly,
         blockKeys,
         this._clickName,
+        () => this._outsideListeners.delete(element),
       );
     } else {
       handler = setListener(
         element,
         listener,
         capture,
+        passive,
         selfOnly,
         blockKeys,
         this._clickName,
       );
     }
 
-    this._outsideListeners.set(element, handler);
+    this._outsideListeners.set(element, {
+      handler,
+      options: {
+        capture,
+        passive,
+      },
+    });
   }
 
   /**
@@ -98,13 +108,14 @@ export default class ExtendedClickOutside {
    */
   remove(element, useWarnings = false) {
     if (!this._outsideListeners.has(element)) {
-      useWarnings && console.warn(missingElement);
+      useWarnings && console.warn(MISSING_ELEMENT);
+
       return;
     }
 
-    const handler = this._outsideListeners.get(element);
+    const listener = this._outsideListeners.get(element);
 
-    document.documentElement.removeEventListener("click", handler);
+    document.documentElement.removeEventListener("click", listener.handler, listener.options);
 
     this._outsideListeners.delete(element);
   }
@@ -114,11 +125,21 @@ export default class ExtendedClickOutside {
    * @method
    */
   removeAllListeners() {
-    for (let handler of this._outsideListeners.values()) {
-      document.documentElement.removeEventListener("click", handler);
+    for (let listener of this._outsideListeners.values()) {
+      document.documentElement.removeEventListener("click", listener.handler, listener.options);
     }
 
     this._outsideListeners.clear();
+  }
+
+  /**
+   * Checks if a listener exists for the given element
+   * @method
+   * @param {HTMLElement} element - ExtendedClickOutside root element
+   * @returns {boolean} listener existense flag
+   */
+  isListenerExisting(element) {
+    return this._outsideListeners.has(element);
   }
 
   /**
@@ -142,7 +163,7 @@ export default class ExtendedClickOutside {
    * @method
    * @returns {number} count
    */
-  getClickOutsidesCount() {
+  getListenersCount() {
     return this._outsideListeners.size;
   }
 }

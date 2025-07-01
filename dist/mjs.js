@@ -1,63 +1,49 @@
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
+function _classCallCheck(a, n) {
+  if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function");
+}
+function _defineProperties(e, r) {
+  for (var t = 0; t < r.length; t++) {
+    var o = r[t];
+    o.enumerable = o.enumerable || false, o.configurable = true, "value" in o && (o.writable = true), Object.defineProperty(e, _toPropertyKey(o.key), o);
   }
 }
-function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor);
-  }
-}
-function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties(Constructor, staticProps);
-  Object.defineProperty(Constructor, "prototype", {
+function _createClass(e, r, t) {
+  return r && _defineProperties(e.prototype, r), Object.defineProperty(e, "prototype", {
     writable: false
-  });
-  return Constructor;
+  }), e;
 }
-function _defineProperty(obj, key, value) {
-  key = _toPropertyKey(key);
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-  return obj;
+function _defineProperty(e, r, t) {
+  return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
+    value: t,
+    enumerable: true,
+    configurable: true,
+    writable: true
+  }) : e[r] = t, e;
 }
-function _toPrimitive(input, hint) {
-  if (typeof input !== "object" || input === null) return input;
-  var prim = input[Symbol.toPrimitive];
-  if (prim !== undefined) {
-    var res = prim.call(input, hint || "default");
-    if (typeof res !== "object") return res;
+function _toPrimitive(t, r) {
+  if ("object" != typeof t || !t) return t;
+  var e = t[Symbol.toPrimitive];
+  if (void 0 !== e) {
+    var i = e.call(t, r);
+    if ("object" != typeof i) return i;
     throw new TypeError("@@toPrimitive must return a primitive value.");
   }
-  return (hint === "string" ? String : Number)(input);
+  return (String )(t);
 }
-function _toPropertyKey(arg) {
-  var key = _toPrimitive(arg, "string");
-  return typeof key === "symbol" ? key : String(key);
+function _toPropertyKey(t) {
+  var i = _toPrimitive(t, "string");
+  return "symbol" == typeof i ? i : i + "";
 }
 
 /**
  * @overview Console warnings
  */
-const initial = "extended-click-outside:";
-const alreadyHasListener = `${initial} element already has extended click outside listener`;
-const invalidElement = `${initial} element must be a valid HTMLElement`;
-const invalidListener = `${initial} listener must be a function`;
-const missingElement = `${initial} element has no click outside listener`;
-const outsideDocument = `${initial} can not run outside a document`;
+const INITIAL = "extended-click-outside:";
+const ALREADY_HAS_LISTENER = `${INITIAL} element already has extended click outside listener`;
+const INVALID_ELEMENT = `${INITIAL} element must be a valid HTMLElement`;
+const INVALID_LISTENER = `${INITIAL} listener must be a function`;
+const MISSING_ELEMENT = `${INITIAL} element has no click outside listener`;
+const OUTSIDE_OF_DOCUMENT = `${INITIAL} can not run outside a document`;
 
 /**
  * Determines whether given element is inside
@@ -110,15 +96,18 @@ const blockByKeys = function (event, blockKeys) {
  * @param {string} eventName - type of event
  * @returns {Function} handler
  */
-const setListener = function (element, listener, capture, selfOnly, blockKeys, eventName) {
+const setListener = function (element, listener, capture, passive, selfOnly, blockKeys, eventName) {
   const handler = function (event) {
     const target = event.target;
     if (target === element) return;
     if (!selfOnly && isParentElement(element, target)) return;
     if (blockByKeys(event, blockKeys)) return;
-    listener();
+    listener(event);
   };
-  document.documentElement.addEventListener(eventName, handler, capture ?? false);
+  document.documentElement.addEventListener(eventName, handler, {
+    capture,
+    passive
+  });
   return handler;
 };
 
@@ -131,92 +120,34 @@ const setListener = function (element, listener, capture, selfOnly, blockKeys, e
  * @param {boolean} selfOnly - only current element flag
  * @param {Array} blockKeys - list of keys
  * @param {string} eventName - type of event
+ * @param {Function} callback - removal of listener
  * @returns {Function} handler
  */
-const setListenerOnce = function (element, listener, capture, selfOnly, blockKeys, eventName) {
+const setListenerOnce = function (element, listener, capture, passive, selfOnly, blockKeys, eventName, callback) {
   const handler = function (event) {
     const target = event.target;
     if (target === element) return;
     if (!selfOnly && isParentElement(element, target)) return;
     if (blockByKeys(event, blockKeys)) return;
-    listener();
-    document.documentElement.removeEventListener(eventName, handler);
+    listener(event);
+    document.documentElement.removeEventListener(eventName, handler, {
+      capture,
+      passive
+    });
+    callback();
   };
-  document.documentElement.addEventListener(eventName, handler, capture ?? false);
+  document.documentElement.addEventListener(eventName, handler, {
+    capture,
+    passive
+  });
   return handler;
 };
-
-/**
- * Extracts element from Angular refs
- * @function
- * @param {Object} element - Angular ref
- * @returns {HTMLElement|null} - element
- */
-const angularHandler = function (element) {
-  if (element.nativeElement) return element.nativeElement;
-  if (element.elementRef && element.elementRef.nativeElement) {
-    return element.nativeElement;
-  }
-  if (element.element && element.element.nativeElement) {
-    return element.element.nativeElement;
-  }
-  return null;
-};
-
-/**
- * Extracts element from JQuery selectors
- * @function
- * @param {Object} element - JQuery selector
- * @returns {HTMLElement|null} - element
- */
-const jQueryHandler = function (element) {
-  if (element[0]) return element[0];
-  return null;
-};
-
-/**
- * Extracts element from React refs
- * @function
- * @param {Object} element - React ref
- * @returns {HTMLElement|null} - element
- */
-const reactHandler = function (element) {
-  if (element.current) return element.current;
-  return null;
-};
-
-/**
- * Extracts element from Vue refs
- * @function
- * @param {Object} element - Vue ref
- * @returns {HTMLElement|null} - element
- */
-const vueHandler = function (element) {
-  if (element.$el) return element.$el;
-  return null;
-};
-
-/**
- * Tries to extract element using all handlers
- * @function
- * @param {Object} element - any ref
- * @returns {HTMLElement|null} - element
- */
-var frameworks = (function (element) {
-  let elementFromHandler;
-  const handlers = [angularHandler, jQueryHandler, reactHandler, vueHandler];
-  for (let counter = 0; counter < handlers.length; counter++) {
-    elementFromHandler = handlers[counter](element);
-    if (elementFromHandler) return elementFromHandler;
-  }
-  return null;
-});
 
 /**
  * ExtendedClickOutside instance constructor
  * @author Ridiger Daniil Dmitrievich, 2023
  * @class
- * @version 1.1.1
+ * @version 2.0.0
  */
 let ExtendedClickOutside = /*#__PURE__*/function () {
   function ExtendedClickOutside() {
@@ -224,7 +155,7 @@ let ExtendedClickOutside = /*#__PURE__*/function () {
     _defineProperty(this, "_clickName", !document.ontouchstart ? "click" : "touchstart");
     _defineProperty(this, "_outsideListeners", new Map());
   }
-  _createClass(ExtendedClickOutside, [{
+  return _createClass(ExtendedClickOutside, [{
     key: "init",
     value:
     /**
@@ -235,41 +166,48 @@ let ExtendedClickOutside = /*#__PURE__*/function () {
      * @param {Object} [config={}] - configuration
      */
     function init(element, listener, config = {}) {
+      var _this = this;
       let handler;
-      const blockKeys = config.blockKeys;
-      const capture = config.capture;
-      const once = config.once;
-      const selfOnly = config.selfOnly;
-      const useWarnings = config.useWarnings;
+      const blockKeys = config.blockKeys || [];
+      const capture = config.capture || false;
+      const passive = config.passive || false;
+      const once = config.once || false;
+      const selfOnly = config.selfOnly || false;
+      const useWarnings = config.useWarnings || false;
       if (!element || typeof element !== "object") {
-        useWarnings && console.warn(invalidElement);
+        useWarnings && console.warn(INVALID_ELEMENT);
         return;
       }
       if (!listener || typeof listener !== "function") {
-        useWarnings && console.warn(invalidListener);
+        useWarnings && console.warn(INVALID_LISTENER);
         return;
       }
       if (!window || !document || !document.documentElement) {
-        useWarnings && console.warn(outsideDocument);
+        useWarnings && console.warn(OUTSIDE_OF_DOCUMENT);
         return;
       }
       if (this._outsideListeners.has(element)) {
-        useWarnings && console.warn(alreadyHasListener);
+        useWarnings && console.warn(ALREADY_HAS_LISTENER);
         return;
       }
-      if (!(element instanceof HTMLElement)) {
-        element = frameworks(element);
-        if (!element) {
-          useWarnings && console.warn(invalidElement);
-          return;
-        }
+      if (!element || !(element instanceof HTMLElement)) {
+        useWarnings && console.warn(INVALID_ELEMENT);
+        return;
       }
       if (once) {
-        handler = setListenerOnce(element, listener, capture, selfOnly, blockKeys, this._clickName);
+        handler = setListenerOnce(element, listener, capture, passive, selfOnly, blockKeys, this._clickName, function () {
+          return _this._outsideListeners.delete(element);
+        });
       } else {
-        handler = setListener(element, listener, capture, selfOnly, blockKeys, this._clickName);
+        handler = setListener(element, listener, capture, passive, selfOnly, blockKeys, this._clickName);
       }
-      this._outsideListeners.set(element, handler);
+      this._outsideListeners.set(element, {
+        handler,
+        options: {
+          capture,
+          passive
+        }
+      });
     }
 
     /**
@@ -282,11 +220,11 @@ let ExtendedClickOutside = /*#__PURE__*/function () {
     key: "remove",
     value: function remove(element, useWarnings = false) {
       if (!this._outsideListeners.has(element)) {
-        useWarnings && console.warn(missingElement);
+        useWarnings && console.warn(MISSING_ELEMENT);
         return;
       }
-      const handler = this._outsideListeners.get(element);
-      document.documentElement.removeEventListener("click", handler);
+      const listener = this._outsideListeners.get(element);
+      document.documentElement.removeEventListener("click", listener.handler, listener.options);
       this._outsideListeners.delete(element);
     }
 
@@ -297,10 +235,22 @@ let ExtendedClickOutside = /*#__PURE__*/function () {
   }, {
     key: "removeAllListeners",
     value: function removeAllListeners() {
-      for (let handler of this._outsideListeners.values()) {
-        document.documentElement.removeEventListener("click", handler);
+      for (let listener of this._outsideListeners.values()) {
+        document.documentElement.removeEventListener("click", listener.handler, listener.options);
       }
       this._outsideListeners.clear();
+    }
+
+    /**
+     * Checks if a listener exists for the given element
+     * @method
+     * @param {HTMLElement} element - ExtendedClickOutside root element
+     * @returns {boolean} listener existense flag
+     */
+  }, {
+    key: "isListenerExisting",
+    value: function isListenerExisting(element) {
+      return this._outsideListeners.has(element);
     }
 
     /**
@@ -325,12 +275,11 @@ let ExtendedClickOutside = /*#__PURE__*/function () {
      * @returns {number} count
      */
   }, {
-    key: "getClickOutsidesCount",
-    value: function getClickOutsidesCount() {
+    key: "getListenersCount",
+    value: function getListenersCount() {
       return this._outsideListeners.size;
     }
   }]);
-  return ExtendedClickOutside;
 }();
 
 export { ExtendedClickOutside as default };

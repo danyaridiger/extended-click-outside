@@ -16,6 +16,7 @@ export const wrapperCreator = () => {
   section.append(div);
   
   if (prevSection) document.body.removeChild(prevSection);
+  
   document.body.append(section);
 };
 
@@ -36,6 +37,17 @@ export const initSelectors = () => {
  * Listeners test handler
  * @function
  */
-export const handler = () => {
+export const handler = (event) => {
+  globalThis.EVENT_PHASE = event.eventPhase;
   globalThis.HANDLE_RESULT = true;
 };
+
+/**
+ * Listeners test passive handler
+ * @function
+ */
+export const passiveHandler = (event) => {
+  event.preventDefault();
+  globalThis.DEFAULT_PREVENTED = event.defaultPrevented;
+};
+

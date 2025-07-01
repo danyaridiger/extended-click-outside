@@ -6,6 +6,8 @@ module.exports = {
   },
   sandboxInjectedGlobals: [],
   globals: {
+    DEFAULT_PREVENTED: false,
+    EVENT_PHASE: 0,
     HANDLE_RESULT: false,
   },
   injectGlobals: true,

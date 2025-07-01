@@ -1,6 +1,6 @@
 # Patch notes
 
-Current `extended-click-outside` version: **1.1.1**
+Current `extended-click-outside` version: **2.0.0**
 
 ***
 
@@ -44,4 +44,15 @@ Current `extended-click-outside` version: **1.1.1**
 
 ### 1.1.1 (2023-09-01)
 
-* Updating dependencies and dev-dependencies.
+* Updating dev-dependencies.
+
+### 2.0.0 (2025-07-01)
+
+* Adding "isListenerExisting" method to allow checking if an ExtendedClickOutside listener exists for a given element.
+* Adding "passive" config option to provide corresponding flag for event listener.
+* Adding initial config options to prevent configuration mismatches.
+* Fixing bug with incorrect removal of disposable ExtendedClickOutside listener.
+* Renaming internal warning constants.
+* Renaming method "getClickOutsidesCount" to "getListenersCount".
+* Removal of internal "frameworks" utility to allow manual extraction of element from DOM reference in any framework.
+* Updating dev-dependencies.

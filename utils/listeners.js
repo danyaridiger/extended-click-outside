@@ -57,6 +57,7 @@ export const setListener = (
   element,
   listener,
   capture,
+  passive,
   selfOnly,
   blockKeys,
   eventName,
@@ -68,10 +69,13 @@ export const setListener = (
     if (!selfOnly && isParentElement(element, target)) return;
     if (blockByKeys(event, blockKeys)) return;
 
-    listener();
+    listener(event);
   };
 
-  document.documentElement.addEventListener(eventName, handler, capture ?? false);
+  document.documentElement.addEventListener(eventName, handler, {
+    capture,
+    passive,
+  });
 
   return handler;
 };
@@ -85,15 +89,18 @@ export const setListener = (
  * @param {boolean} selfOnly - only current element flag
  * @param {Array} blockKeys - list of keys
  * @param {string} eventName - type of event
+ * @param {Function} callback - removal of listener
  * @returns {Function} handler
  */
 export const setListenerOnce = (
   element,
   listener,
   capture,
+  passive,
   selfOnly,
   blockKeys,
   eventName,
+  callback,
 ) => {
   const handler = (event) => {
     const target = event.target;
@@ -102,11 +109,18 @@ export const setListenerOnce = (
     if (!selfOnly && isParentElement(element, target)) return;
     if (blockByKeys(event, blockKeys)) return;
 
-    listener();
-    document.documentElement.removeEventListener(eventName, handler);
+    listener(event);
+    document.documentElement.removeEventListener(eventName, handler, {
+      capture,
+      passive,
+    });
+    callback();
   };
 
-  document.documentElement.addEventListener(eventName, handler, capture ?? false);
+  document.documentElement.addEventListener(eventName, handler, {
+    capture,
+    passive,
+  });
 
   return handler;
 };

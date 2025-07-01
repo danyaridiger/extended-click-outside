@@ -1,14 +1,15 @@
-type BlockKeys = "alt" | "ctrl" | "shift";
+type BlockKey = "alt" | "ctrl" | "shift";
 
 /**
  * Configuration types
  */
 interface ExtendedClickOutsideConfig {
+  blockKeys?: BlockKey[];
   capture?: boolean;
+  passive?: boolean;
   once?: boolean;
   selfOnly?: boolean;
   useWarnings?: boolean;
-  blockKeys?: BlockKeys[];
 }
 
 /**
@@ -21,8 +22,10 @@ declare class ExtendedClickOutside {
   public init(element: HTMLElement, listener: Function, config: ExtendedClickOutsideConfig): void;
   public remove(element: HTMLElement, useWarnings?: boolean): void;
   public removeAllListeners(): void;
+  public isListenerExisting(element: HTMLElement): boolean;
   public getCurrentSnapshots(): string[];
-  public getClickOutsidesCount(): number;
+  public getListenersCount(): number;
 }
 
-export { ExtendedClickOutsideConfig, ExtendedClickOutside as default };
+export { ExtendedClickOutside as default };
+export type { ExtendedClickOutsideConfig };

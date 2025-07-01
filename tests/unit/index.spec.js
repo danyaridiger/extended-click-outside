@@ -3,15 +3,16 @@ import userEvent from '@testing-library/user-event';
 import ExtendedClickOutside from "../../index";
 
 import { 
-  invalidElement, 
-  invalidListener,
-  missingElement,
+  INVALID_ELEMENT, 
+  INVALID_LISTENER,
+  MISSING_ELEMENT,
 } from "../../sets/warnings";
 
 import { 
   wrapperCreator,
   initSelectors,
   handler,
+  passiveHandler,
 } from "../utils/wrappers";
 
 let instance;
@@ -24,8 +25,13 @@ console.warn = (warning) => {
 describe("extended-click-outside", () => {
   beforeEach(() => {
     if (instance) instance.removeAllListeners();
+
     instance = new ExtendedClickOutside();
+
     wrapperCreator();
+
+    globalThis.DEFAULT_PREVENTED = false;
+    globalThis.EVENT_PHASE = 0;
     globalThis.HANDLE_RESULT = false;
   });
 
@@ -42,6 +48,28 @@ describe("extended-click-outside", () => {
     await userEvent.click(section);
 
     expect(globalThis.HANDLE_RESULT).toBeTruthy();
+  });
+
+
+  it('correctly initializes click listener with capturing of the event', async () => {
+    const { div, section } = initSelectors();
+
+    instance.init(div, handler, { capture: true });
+
+    await userEvent.click(section);
+
+    expect(globalThis.EVENT_PHASE).toEqual(1);
+  });
+
+
+  it("correctly initializes passive click listener", async () => {
+    const { div, section } = initSelectors();
+
+    instance.init(div, passiveHandler, { passive: true });
+
+    await userEvent.click(section);
+
+    expect(globalThis.DEFAULT_PREVENTED).toBeFalsy();
   });
 
 
@@ -111,13 +139,13 @@ describe("extended-click-outside", () => {
 
     await userEvent.click(section);
 
-    expect(globalThis.warning).toEqual(invalidElement);
+    expect(globalThis.warning).toEqual(INVALID_ELEMENT);
 
     instance.init(div, null, { useWarnings: true });
 
     await userEvent.click(section);
 
-    expect(globalThis.warning).toEqual(invalidListener);
+    expect(globalThis.warning).toEqual(INVALID_LISTENER);
   });
 
 
@@ -128,7 +156,7 @@ describe("extended-click-outside", () => {
 
     instance.remove(null, true);
 
-    expect(globalThis.warning).toEqual(missingElement);
+    expect(globalThis.warning).toEqual(MISSING_ELEMENT);
 
     instance.remove(div);
 
@@ -144,13 +172,23 @@ describe("extended-click-outside", () => {
     instance.init(div, handler);
     instance.init(section, handler);
 
-    expect(instance.getClickOutsidesCount()).toEqual(2);
+    expect(instance.getListenersCount()).toEqual(2);
 
     instance.removeAllListeners();
     await userEvent.click(section);
 
     expect(globalThis.HANDLE_RESULT).toBeFalsy();
-    expect(instance.getClickOutsidesCount()).toEqual(0);
+    expect(instance.getListenersCount()).toEqual(0);
+  });
+
+
+  it("correctly extracts listener from given element", async () => {
+    const { div, section } = initSelectors();
+
+    instance.init(div, handler);
+
+    expect(instance.isListenerExisting(div)).toBeTruthy();
+    expect(instance.isListenerExisting(section)).toBeFalsy();
   });
 
   
@@ -164,12 +202,27 @@ describe("extended-click-outside", () => {
   });
 
 
-  it("correctly converts DOMref object to element", async () => {
+  it("correctly creates an instance on a DOMref element", async () => {
     const { div, section } = initSelectors();
-
     const reactRef = { current: div };
 
-    instance.init(reactRef, handler);
+    instance.init(reactRef.current, handler);
+
+    await userEvent.click(section);
+
+    expect(globalThis.HANDLE_RESULT).toBeTruthy();
+  });
+ 
+
+  it("correctly creates an instance on a Vue ref element", async () => {
+    const { div, section } = initSelectors();
+    const vueRef = { 
+      value: {
+        $el: div,
+      },
+    }
+
+    instance.init(vueRef.value.$el, handler);
 
     await userEvent.click(section);
 
@@ -179,7 +232,6 @@ describe("extended-click-outside", () => {
 
   it("correctly handles JQuery selectors", async () => {
     const { div, section } = initSelectors();
-
     const jQuerySelector = {
       0: div,
       context: document,
@@ -192,7 +244,7 @@ describe("extended-click-outside", () => {
       selector: "div",
     };
 
-    instance.init(jQuerySelector, handler);
+    instance.init(jQuerySelector[0], handler);
 
     await userEvent.click(section);
 
