@@ -123,7 +123,6 @@ describe("extended-click-outside", () => {
     expect(globalThis.HANDLE_RESULT).toBeFalsy();
 
     instance.removeAllListeners();
-
     instance.init(div, handler, { selfOnly: true });
 
     await userEvent.click(span);
@@ -153,7 +152,6 @@ describe("extended-click-outside", () => {
     const { div, section } = initSelectors();
 
     instance.init(div, handler, { useWarnings: true });
-
     instance.remove(null, true);
 
     expect(globalThis.warning).toEqual(MISSING_ELEMENT);
@@ -175,6 +173,7 @@ describe("extended-click-outside", () => {
     expect(instance.getListenersCount()).toEqual(2);
 
     instance.removeAllListeners();
+
     await userEvent.click(section);
 
     expect(globalThis.HANDLE_RESULT).toBeFalsy();

@@ -151,7 +151,7 @@ const setListenerOnce = function (element, listener, capture, passive, selfOnly,
  * ExtendedClickOutside instance constructor
  * @author Ridiger Daniil Dmitrievich, 2023
  * @class
- * @version 2.0.0
+ * @version 2.0.1
  */
 let ExtendedClickOutside = /*#__PURE__*/function () {
   function ExtendedClickOutside() {
@@ -249,7 +249,7 @@ let ExtendedClickOutside = /*#__PURE__*/function () {
      * Checks if a listener exists for the given element
      * @method
      * @param {HTMLElement} element - ExtendedClickOutside root element
-     * @returns {boolean} listener existense flag
+     * @returns {boolean} listener existenсe flag
      */
   }, {
     key: "isListenerExisting",

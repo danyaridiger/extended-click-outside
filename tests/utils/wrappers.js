@@ -24,7 +24,7 @@ export const wrapperCreator = () => {
  * Initializes the main testable element selectors for unit-tests
  * @param {HTMLElement|null} div - selector for listener
  * @param {HTMLElement|null} section - selector for handler
- * @returns {Object} - selectors
+ * @returns {Object} selectors
  */
 export const initSelectors = () => {
   const div = document.querySelector("div");
@@ -34,7 +34,7 @@ export const initSelectors = () => {
 };
 
 /**
- * Listeners test handler
+ * Test listener handler
  * @function
  */
 export const handler = (event) => {
@@ -43,11 +43,12 @@ export const handler = (event) => {
 };
 
 /**
- * Listeners test passive handler
+ * Test listener passive handler
  * @function
  */
 export const passiveHandler = (event) => {
   event.preventDefault();
+  
   globalThis.DEFAULT_PREVENTED = event.defaultPrevented;
 };
 

@@ -1,4 +1,4 @@
-# extended-click-outside v2.0.0
+# extended-click-outside v2.0.1
 
 ***
 
@@ -13,7 +13,7 @@ An important feature is that one DOM-element can have only single "extended-clic
 
 ### Installation with yarn
 
-``yarn install --production extended-click-outside``
+``yarn add --production extended-click-outside``
 
 ### Importing
 
@@ -130,7 +130,6 @@ extendedClickOutside.removeAllListeners();
 ## Check listener for a given element
 
 Checking if a listener exists for the given element.
-
 
 ```js
 import ExtendedClickOutside from "extended-click-outside";

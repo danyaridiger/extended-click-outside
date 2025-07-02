@@ -1,6 +1,6 @@
 # Patch notes
 
-Current `extended-click-outside` version: **2.0.0**
+Current `extended-click-outside` version: **2.0.1**
 
 ***
 
@@ -56,3 +56,7 @@ Current `extended-click-outside` version: **2.0.0**
 * Renaming method "getClickOutsidesCount" to "getListenersCount".
 * Removal of internal "frameworks" utility to allow manual extraction of element from DOM reference in any framework.
 * Updating dev-dependencies.
+
+### 2.0.1 (2025-07-02)
+
+* Changing documentation and some JSDoc blocks.

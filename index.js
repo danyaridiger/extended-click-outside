@@ -15,7 +15,7 @@ import {
  * ExtendedClickOutside instance constructor
  * @author Ridiger Daniil Dmitrievich, 2023
  * @class
- * @version 2.0.0
+ * @version 2.0.1
  */
 export default class ExtendedClickOutside {
 
@@ -136,7 +136,7 @@ export default class ExtendedClickOutside {
    * Checks if a listener exists for the given element
    * @method
    * @param {HTMLElement} element - ExtendedClickOutside root element
-   * @returns {boolean} listener existense flag
+   * @returns {boolean} listener existenсe flag
    */
   isListenerExisting(element) {
     return this._outsideListeners.has(element);
