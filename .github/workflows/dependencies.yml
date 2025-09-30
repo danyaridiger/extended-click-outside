@@ -1,0 +1,62 @@
+name: Dependency Updates
+
+on:
+  schedule:
+    - cron: "0 0 * * 1" # Weekly on Monday at 00:00
+  workflow_dispatch:
+
+jobs:
+  update:
+    name: Update Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Generate branch name
+        id: branch-name
+        run: |
+          BRANCH_NAME="deps/update-$(date +%Y%m%d%H%M%S)"
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          echo "Generated branch name: $BRANCH_NAME"
+
+      - name: Update dependencies
+        run: |
+          npx npm-check-updates -u
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Run tests after update
+        run: npm test
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No dependency changes detected"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Dependency changes detected"
+          fi
+
+      - name: Create Pull Request
+        if: steps.changes.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore(deps): update dependencies"
+          branch: ${{ steps.branch-name.outputs.branch_name }}
+          title: "chore(deps): update dependencies"
+          body: "Automated dependency updates"
+          labels: "dependencies,automated"

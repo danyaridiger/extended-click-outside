@@ -1,0 +1,96 @@
+name: Publish to npm
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  check-commit:
+    name: Check commit message
+    runs-on: ubuntu-latest
+    outputs:
+      should_release: ${{ steps.check-commit.outputs.should_release }}
+      version: ${{ steps.check-commit.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check commit message and extract version
+        id: check-commit
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          if [[ "$COMMIT_MSG" =~ ^(chore|feat)\(release\):\ release\ extended-click-outside\ v([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+            echo "should_release=true" >> $GITHUB_OUTPUT
+            echo "version=${BASH_REMATCH[2]}" >> $GITHUB_OUTPUT
+          else
+            echo "should_release=false" >> $GITHUB_OUTPUT
+            echo "version=" >> $GITHUB_OUTPUT
+            echo "Commit message must match pattern 'chore(release): release extended-click-outside vX.X.X' or 'feat(release): release extended-click-outside vX.X.X'"
+          fi
+
+  test:
+    name: Run Unit Tests
+    needs: check-commit
+    if: needs.check-commit.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test -- --coverage
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        if: success()
+
+  publish:
+    name: Publish to npm
+    needs: [check-commit, test]
+    if: needs.check-commit.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies (including devDependencies)
+        run: npm ci --include=dev
+
+      - name: Build package
+        run: npm run build
+
+      - name: Verify package
+        run: |
+          npm pack --dry-run
+          npx pkg-ok
+
+      - name: Create git tag
+        run: |
+          git config --global user.name "danyaridiger"
+          git config --global user.email "extendedmultiselect@yandex.ru"
+          VERSION="v${{ needs.check-commit.outputs.version }}"
+          TAG_MESSAGE="Version $VERSION\n\nPlease refer to [CHANGELOG.md](https://github.com/danyaridiger/extended-click-outside/blob/master/CHANGELOG.md) for details."
+          git tag -a "$VERSION" -m "$(echo -e "$TAG_MESSAGE")"
+          git push origin "$VERSION"
+
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

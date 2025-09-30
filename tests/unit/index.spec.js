@@ -1,14 +1,10 @@
-import userEvent from '@testing-library/user-event';
+import userEvent from "@testing-library/user-event";
 
 import ExtendedClickOutside from "../../index";
 
-import { 
-  INVALID_ELEMENT, 
-  INVALID_LISTENER,
-  MISSING_ELEMENT,
-} from "../../sets/warnings";
+import { INVALID_ELEMENT, INVALID_LISTENER, MISSING_ELEMENT } from "../../sets/warnings";
 
-import { 
+import {
   wrapperCreator,
   initSelectors,
   handler,
@@ -16,11 +12,11 @@ import {
 } from "../utils/wrappers";
 
 let instance;
-const snapshots = ['<div>', '<section style="width: 175px; height: 175px;">'];
+const snapshots = ["<div>", '<section style="width: 175px; height: 175px;">'];
 
 console.warn = (warning) => {
   globalThis.warning = warning;
-}
+};
 
 describe("extended-click-outside", () => {
   beforeEach(() => {
@@ -35,8 +31,7 @@ describe("extended-click-outside", () => {
     globalThis.HANDLE_RESULT = false;
   });
 
-
-  it('correctly initializes click listener', async () => {
+  it("correctly initializes click listener", async () => {
     const { div, section } = initSelectors();
 
     instance.init(div, handler);
@@ -50,8 +45,7 @@ describe("extended-click-outside", () => {
     expect(globalThis.HANDLE_RESULT).toBeTruthy();
   });
 
-
-  it('correctly initializes click listener with capturing of the event', async () => {
+  it("correctly initializes click listener with capturing of the event", async () => {
     const { div, section } = initSelectors();
 
     instance.init(div, handler, { capture: true });
@@ -60,7 +54,6 @@ describe("extended-click-outside", () => {
 
     expect(globalThis.EVENT_PHASE).toEqual(1);
   });
-
 
   it("correctly initializes passive click listener", async () => {
     const { div, section } = initSelectors();
@@ -72,8 +65,7 @@ describe("extended-click-outside", () => {
     expect(globalThis.DEFAULT_PREVENTED).toBeFalsy();
   });
 
-
-  it('correctly initializes disposable click listener', async () => {
+  it("correctly initializes disposable click listener", async () => {
     const { div, section } = initSelectors();
 
     instance.init(div, handler, { once: true });
@@ -89,30 +81,28 @@ describe("extended-click-outside", () => {
     expect(globalThis.HANDLE_RESULT).toBeFalsy();
   });
 
-
-  it('correctly restricts click listener by key combinations', async () => {
+  it("correctly restricts click listener by key combinations", async () => {
     const { div, section } = initSelectors();
 
     instance.init(div, handler, { blockKeys: ["alt", "shift"] });
-    
-    await userEvent.pointer({keys: '[/MouseLeft][AltLeft>]'});
+
+    await userEvent.pointer({ keys: "[/MouseLeft][AltLeft>]" });
 
     expect(globalThis.HANDLE_RESULT).toBeFalsy();
 
-    await userEvent.pointer({keys: '[/ShiftLeft]'});
+    await userEvent.pointer({ keys: "[/ShiftLeft]" });
     await userEvent.click(section);
 
     expect(globalThis.HANDLE_RESULT).toBeTruthy();
 
     globalThis.HANDLE_RESULT = false;
 
-    await userEvent.pointer({keys: '[/MouseLeft][ShiftLeft>]'});
+    await userEvent.pointer({ keys: "[/MouseLeft][ShiftLeft>]" });
 
     expect(globalThis.HANDLE_RESULT).toBeFalsy();
   });
 
-  
-  it('correctly handles child elements', async () => {
+  it("correctly handles child elements", async () => {
     const div = document.querySelector("div");
     const span = document.querySelector("span");
 
@@ -130,8 +120,7 @@ describe("extended-click-outside", () => {
     expect(globalThis.HANDLE_RESULT).toBeTruthy();
   });
 
-
-  it('correctly displays useful warnings in console', async () => {
+  it("correctly displays useful warnings in console", async () => {
     const { div, section } = initSelectors();
 
     instance.init(null, handler, { useWarnings: true });
@@ -147,7 +136,6 @@ describe("extended-click-outside", () => {
     expect(globalThis.warning).toEqual(INVALID_LISTENER);
   });
 
-
   it("correctly removes click listener", async () => {
     const { div, section } = initSelectors();
 
@@ -162,7 +150,6 @@ describe("extended-click-outside", () => {
 
     expect(globalThis.HANDLE_RESULT).toBeFalsy();
   });
-
 
   it("corectly removes all click listeners", async () => {
     const { div, section } = initSelectors();
@@ -180,7 +167,6 @@ describe("extended-click-outside", () => {
     expect(instance.getListenersCount()).toEqual(0);
   });
 
-
   it("correctly extracts listener from given element", async () => {
     const { div, section } = initSelectors();
 
@@ -190,7 +176,6 @@ describe("extended-click-outside", () => {
     expect(instance.isListenerExisting(section)).toBeFalsy();
   });
 
-  
   it("correctly gets all current snapshots", () => {
     const { div, section } = initSelectors();
 
@@ -199,7 +184,6 @@ describe("extended-click-outside", () => {
 
     expect(instance.getCurrentSnapshots()).toEqual(snapshots);
   });
-
 
   it("correctly creates an instance on a DOMref element", async () => {
     const { div, section } = initSelectors();
@@ -211,15 +195,14 @@ describe("extended-click-outside", () => {
 
     expect(globalThis.HANDLE_RESULT).toBeTruthy();
   });
- 
 
   it("correctly creates an instance on a Vue ref element", async () => {
     const { div, section } = initSelectors();
-    const vueRef = { 
+    const vueRef = {
       value: {
         $el: div,
       },
-    }
+    };
 
     instance.init(vueRef.value.$el, handler);
 
@@ -227,7 +210,6 @@ describe("extended-click-outside", () => {
 
     expect(globalThis.HANDLE_RESULT).toBeTruthy();
   });
-
 
   it("correctly handles JQuery selectors", async () => {
     const { div, section } = initSelectors();
