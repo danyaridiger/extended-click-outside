@@ -11,10 +11,7 @@ const isParentElement = (element, target) => {
 
   while (currentTarget) {
     if (currentTarget === element) return true;
-    if (
-      currentTarget === document.documentElement 
-      || !currentTarget
-    ) return false;
+    if (currentTarget === document.documentElement || !currentTarget) return false;
 
     currentTarget = currentTarget.parentNode;
   }
@@ -29,7 +26,7 @@ const isParentElement = (element, target) => {
  * @returns {boolean} restriction
  */
 const blockByKeys = (event, blockKeys) => {
-  switch(true) {
+  switch (true) {
     case !blockKeys || !blockKeys.length:
       return false;
     case event.altKey && blockKeys.includes("alt"):
@@ -38,7 +35,8 @@ const blockByKeys = (event, blockKeys) => {
       return true;
     case event.shiftKey && blockKeys.includes("shift"):
       return true;
-    default: return false;
+    default:
+      return false;
   }
 };
 

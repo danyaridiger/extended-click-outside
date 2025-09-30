@@ -6,19 +6,15 @@ import {
   OUTSIDE_OF_DOCUMENT,
 } from "./sets/warnings";
 
-import { 
-  setListener,
-  setListenerOnce,
-} from "./utils/listeners";
+import { setListener, setListenerOnce } from "./utils/listeners";
 
 /**
  * ExtendedClickOutside instance constructor
  * @author Ridiger Daniil Dmitrievich, 2023
  * @class
- * @version 2.0.1
+ * @version 3.0.0
  */
 export default class ExtendedClickOutside {
-
   _clickName = !document.ontouchstart ? "click" : "touchstart";
   _outsideListeners = new Map();
 
@@ -37,7 +33,7 @@ export default class ExtendedClickOutside {
     const once = config.once || false;
     const selfOnly = config.selfOnly || false;
     const useWarnings = config.useWarnings || false;
-    
+
     if (!element || typeof element !== "object") {
       useWarnings && console.warn(INVALID_ELEMENT);
 
@@ -115,7 +111,11 @@ export default class ExtendedClickOutside {
 
     const listener = this._outsideListeners.get(element);
 
-    document.documentElement.removeEventListener("click", listener.handler, listener.options);
+    document.documentElement.removeEventListener(
+      "click",
+      listener.handler,
+      listener.options,
+    );
 
     this._outsideListeners.delete(element);
   }
@@ -126,7 +126,11 @@ export default class ExtendedClickOutside {
    */
   removeAllListeners() {
     for (let listener of this._outsideListeners.values()) {
-      document.documentElement.removeEventListener("click", listener.handler, listener.options);
+      document.documentElement.removeEventListener(
+        "click",
+        listener.handler,
+        listener.options,
+      );
     }
 
     this._outsideListeners.clear();

@@ -14,9 +14,9 @@ export const wrapperCreator = () => {
 
   div.append(span);
   section.append(div);
-  
+
   if (prevSection) document.body.removeChild(prevSection);
-  
+
   document.body.append(section);
 };
 
@@ -48,7 +48,6 @@ export const handler = (event) => {
  */
 export const passiveHandler = (event) => {
   event.preventDefault();
-  
+
   globalThis.DEFAULT_PREVENTED = event.defaultPrevented;
 };
-

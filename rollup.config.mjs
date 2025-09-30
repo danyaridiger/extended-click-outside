@@ -1,19 +1,28 @@
 import { babel } from "@rollup/plugin-babel";
 import dts from "rollup-plugin-dts";
+import commonjs from "@rollup/plugin-commonjs";
+import terser from "@rollup/plugin-terser";
+
+const LIB_NAME = "ExtendedClickOutside";
 
 export default [
   {
-    input: "index.js",
+    input: "./index.js",
     output: [
       {
-        file: "dist/cjs.js",
+        file: "dist/index.cjs.js",
         format: "cjs",
-        exports: "named",
         sourcemap: true,
       },
       {
-        file: "dist/mjs.js",
+        file: "dist/index.esm.js",
         format: "es",
+        sourcemap: true,
+      },
+      {
+        file: "dist/index.umd.js",
+        format: "umd",
+        name: LIB_NAME,
         sourcemap: true,
       },
     ],
@@ -24,20 +33,19 @@ export default [
           "@babel/plugin-transform-arrow-functions",
           "@babel/plugin-proposal-class-properties",
           "@babel/plugin-transform-classes",
-          "transform-imports"
+          "transform-imports",
         ],
       }),
-    ]
+      commonjs(),
+      terser(),
+    ],
   },
   {
-    input: "./types/index.d.ts",
-    output: [
-      {
-        file: "dist/types/index.d.ts",
-        format: "es",
-        sourcemap: false,
-      }
-    ],
+    input: "types/index.d.ts",
+    output: {
+      file: "dist/types/index.d.ts",
+      format: "es",
+    },
     plugins: [dts()],
-  }
+  },
 ];
