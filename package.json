@@ -13,14 +13,14 @@
     "vanillajs",
     "lightweight"
   ],
-  "typings": "dist/types/index.d.ts",
-  "types": "dist/types/index.d.ts",
+  "typings": "./dist/types/index.d.ts",
+  "types": "./dist/types/index.d.ts",
   "files": [
     "dist"
   ],
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
-  "unpkg": "dist/index.umd.js",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.esm.js",
+  "unpkg": "./dist/index.umd.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/danyaridiger/extended-click-outside.git"
