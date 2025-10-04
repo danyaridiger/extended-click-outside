@@ -83,12 +83,14 @@ jobs:
 
       - name: Create git tag
         run: |
-          git config --global user.name "danyaridiger"
-          git config --global user.email "extendedmultiselect@yandex.ru"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           VERSION="v${{ needs.check-commit.outputs.version }}"
           TAG_MESSAGE="Version $VERSION\n\nPlease refer to [CHANGELOG.md](https://github.com/danyaridiger/extended-click-outside/blob/master/CHANGELOG.md) for details."
           git tag -a "$VERSION" -m "$(echo -e "$TAG_MESSAGE")"
           git push origin "$VERSION"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to npm
         run: npm publish --access public

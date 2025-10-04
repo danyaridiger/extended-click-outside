@@ -1,6 +1,6 @@
 # Patch notes
 
-Current `extended-click-outside` version: **3.1.0**
+Current `extended-click-outside` version: **3.1.1**
 
 ---
 
@@ -93,3 +93,7 @@ Current `extended-click-outside` version: **3.1.0**
 - Expanded .eslintrc.json configuration file to provide TypeScript support.
 - Removed excess "size" script from package.json file.
 - Updated "release" workflow for automatically creating Github releases.
+
+### 3.1.1 (2025-10-04)
+
+- Fixed "release" workflow configuration for automatically creating Github tags.
