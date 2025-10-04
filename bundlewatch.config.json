@@ -3,15 +3,15 @@
   "files": [
     {
       "path": "dist/index.umd.js",
-      "maxSize": "20 kB"
+      "maxSize": "2 kB"
     },
     {
       "path": "dist/index.esm.js",
-      "maxSize": "20 kB"
+      "maxSize": "2 kB"
     },
     {
       "path": "dist/index.cjs.js",
-      "maxSize": "20 kB"
+      "maxSize": "2 kB"
     }
   ],
   "compression": "gzip",

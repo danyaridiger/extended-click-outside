@@ -1,12 +1,16 @@
 {
   "root": true,
-  "parser": "@babel/eslint-parser",
-  "plugins": ["jest"],
-  "extends": [
-    "eslint:recommended",
-    "plugin:jest/recommended",
-    "prettier"
-  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "requireConfigFile": false,
+    "babelOptions": {
+      "presets": ["@babel/preset-env"]
+    }
+  },
+  "plugins": ["jest", "@typescript-eslint"],
+  "extends": ["eslint:recommended", "plugin:jest/recommended", "prettier"],
   "rules": {
     "no-undef": "warn",
     "jest/no-disabled-tests": "warn",
@@ -17,5 +21,42 @@
     "browser": true,
     "node": true,
     "jest": true
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/*.ts", "**/*.tsx"],
+      "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:jest/recommended",
+        "prettier"
+      ],
+      "rules": {
+        "no-undef": "off",
+        "@typescript-eslint/no-unused-vars": "warn",
+        "@typescript-eslint/no-unsafe-function-type": "warn",
+        "jest/no-disabled-tests": "warn",
+        "jest/no-focused-tests": "error",
+        "jest/no-identical-title": "error"
+      }
+    },
+    {
+      "files": ["**/*.js", "**/*.jsx"],
+      "parser": "@babel/eslint-parser",
+      "parserOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "requireConfigFile": false,
+        "babelOptions": {
+          "presets": ["@babel/preset-env"]
+        }
+      },
+      "rules": {
+        "no-undef": "warn",
+        "jest/no-disabled-tests": "warn",
+        "jest/no-focused-tests": "error",
+        "jest/no-identical-title": "error"
+      }
+    }
+  ]
 }

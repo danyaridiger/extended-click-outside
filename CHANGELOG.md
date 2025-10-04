@@ -1,6 +1,6 @@
 # Patch notes
 
-Current `extended-click-outside` version: **3.0.0**
+Current `extended-click-outside` version: **3.1.0**
 
 ---
 
@@ -61,7 +61,7 @@ Current `extended-click-outside` version: **3.0.0**
 
 - Changing documentation and some JSDoc blocks.
 
-### 3.0.0 (2025-09-09)
+### 3.0.0 (2025-09-30)
 
 - Added "@babel/eslint-parser", "@commitlint/cli", "@commitlint/config-conventional", "@rollup/plugin-commonjs",
   "@rollup/plugin-terser", "jest-environment-jsdom", "eslint-config-prettier", "eslint-plugin-jest" dev-dependencies.
@@ -84,3 +84,12 @@ Current `extended-click-outside` version: **3.0.0**
 - Changed eslint version and removed .eslintrc.js configuration file in favor of the new .eslintrc.json configuration file.
 - Changed .gitignore and .npmignore configuration files and added .eslintignore configuration file.
 - Removed "publish" workflow in favor of the new "release" workflow.
+
+### 3.1.0 (2025-10-04)
+
+- Added "@typescript-eslint/eslint-plugin and "rollup-plugin-banner2" dev-dependencies.
+- Added banner with package information to all output variants.
+- Corrected bundle size tresholds in bundlewatch tool.
+- Expanded .eslintrc.json configuration file to provide TypeScript support.
+- Removed excess "size" script from package.json file.
+- Updated "release" workflow for automatically creating Github releases.

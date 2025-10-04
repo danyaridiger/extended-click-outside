@@ -2,8 +2,11 @@ import { babel } from "@rollup/plugin-babel";
 import dts from "rollup-plugin-dts";
 import commonjs from "@rollup/plugin-commonjs";
 import terser from "@rollup/plugin-terser";
+import banner from "rollup-plugin-banner2";
+import { readFileSync } from "fs";
 
 const LIB_NAME = "ExtendedClickOutside";
+const packageInfo = JSON.parse(readFileSync("./package.json", "utf8"));
 
 export default [
   {
@@ -35,6 +38,17 @@ export default [
           "@babel/plugin-transform-classes",
           "transform-imports",
         ],
+      }),
+      banner(() => {
+        return `
+/*!
+ * ${packageInfo.name} v${packageInfo.version}
+ * Author: ${packageInfo.author}
+ * Description: ${packageInfo.description}
+ * License: ${packageInfo.license}
+ * Repository: ${packageInfo.repository?.url}
+ */
+        `;
       }),
       commonjs(),
       terser(),
