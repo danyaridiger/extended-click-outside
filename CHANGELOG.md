@@ -1,6 +1,6 @@
 # Patch notes
 
-Current `extended-click-outside` version: **3.1.2**
+Current `extended-click-outside` version: **3.1.3**
 
 ---
 
@@ -101,3 +101,7 @@ Current `extended-click-outside` version: **3.1.2**
 ### 3.1.2 (2025-10-04)
 
 - Added needed permissions for "release" workflow.
+
+### 3.1.3 (2025-10-04)
+
+- Fixed some syntax of "release" workflow for automatically creating Github releases.

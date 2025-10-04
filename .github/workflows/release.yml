@@ -166,16 +166,14 @@ jobs:
             echo "❌ No matching changelog section found for version ${{ needs.check-commit.outputs.version }}"
             echo "found=false" >> $GITHUB_OUTPUT
             
-            # Create fallback body
-            FALLBACK_BODY=$(cat << FALLBACK
-            ## v${{ needs.check-commit.outputs.version }}
-            
-            No changelog entry found for this version in CHANGELOG.md.
-            Please check the [CHANGELOG.md](https://github.com/danyaridiger/extended-click-outside/blob/master/CHANGELOG.md) file for details about this release.
-            FALLBACK
-            )
-            echo "body=$FALLBACK_BODY" >> $GITHUB_OUTPUT
-          fi
+            # Create fallback body - using a different approach to avoid heredoc issues
+            FALLBACK_BODY="## v${{ needs.check-commit.outputs.version }}
+
+          No changelog entry found for this version in CHANGELOG.md.
+          Please check the [CHANGELOG.md](https://github.com/danyaridiger/extended-click-outside/blob/master/CHANGELOG.md) file for details about this release."
+                
+                echo "body=$FALLBACK_BODY" >> $GITHUB_OUTPUT
+              fi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
