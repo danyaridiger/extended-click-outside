@@ -2,7 +2,7 @@
   "root": true,
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaVersion": 2020,
+    "ecmaVersion": 2024,
     "sourceType": "module",
     "requireConfigFile": false,
     "babelOptions": {
@@ -20,7 +20,8 @@
   "env": {
     "browser": true,
     "node": true,
-    "jest": true
+    "jest": true,
+    "es6": true
   },
   "overrides": [
     {
@@ -44,7 +45,7 @@
       "files": ["**/*.js", "**/*.jsx"],
       "parser": "@babel/eslint-parser",
       "parserOptions": {
-        "ecmaVersion": 2020,
+        "ecmaVersion": 2024,
         "sourceType": "module",
         "requireConfigFile": false,
         "babelOptions": {
