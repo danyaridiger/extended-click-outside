@@ -1,9 +1,5 @@
 module.exports = {
-  collectCoverageFrom: [
-    "src/**/*.{js,jsx}",
-    "!src/**/*.test.{js,jsx}",
-    "!src/**/index.js",
-  ],
+  collectCoverageFrom: ["src/**/*.{js}", "!src/**/*.test.{js}", "!src/**/index.js"],
   coverageThreshold: {
     global: {
       branches: 90,
@@ -12,28 +8,28 @@ module.exports = {
       statements: 95,
     },
   },
-  expand: true,
   displayName: {
     name: "extended-click-outside",
     color: "bgGreen",
   },
-  sandboxInjectedGlobals: [],
+  expand: true,
+  fakeTimers: {
+    legacyFakeTimers: true,
+  },
   globals: {
     DEFAULT_PREVENTED: false,
     EVENT_PHASE: 0,
     HANDLE_RESULT: false,
   },
   injectGlobals: true,
-  moduleFileExtensions: ["ts", "tsx", "js", "json", "jsx", "mjs", "node"],
+  moduleFileExtensions: ["js", "ts", "json", "mjs", "node", "vue"],
   resetModules: true,
   resetMocks: true,
   rootDir: "./",
+  sandboxInjectedGlobals: [],
   slowTestThreshold: 20,
   testEnvironment: "jsdom",
   testLocationInResults: true,
   testMatch: ["**/tests/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[tj]s?(x)"],
   testPathIgnorePatterns: ["tests/utils"],
-  fakeTimers: {
-    legacyFakeTimers: true,
-  },
 };

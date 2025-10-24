@@ -12,6 +12,10 @@ jobs:
   audit:
     name: Audit Dependencies
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+      contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -25,17 +29,28 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Audit dependencies
+      - name: Run security audit
         id: audit
         run: |
-          # Run audit and capture output
-          AUDIT_OUTPUT=$(npm audit --audit-level=moderate --json 2>/dev/null || true)
-          echo "audit_output<<EOF" >> $GITHUB_OUTPUT
-          echo "$AUDIT_OUTPUT" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          set +e
+          npm audit --audit-level=moderate --json > audit_results.json 2>audit_error.log
+          AUDIT_EXIT_CODE=$?
 
-          # Check exit code but don't fail the step yet
-          npm audit --audit-level=moderate || echo "::warning::npm audit found vulnerabilities"
+          if [ $AUDIT_EXIT_CODE -eq 1 ]; then
+            echo "Vulnerabilities found (exit code 1)"
+            echo "has_vulnerabilities=true" >> $GITHUB_OUTPUT
+          elif [ $AUDIT_EXIT_CODE -ne 0 ]; then
+            echo "Audit failed with exit code: $AUDIT_EXIT_CODE"
+            echo '{"error": "audit_failed", "exit_code": '$AUDIT_EXIT_CODE'}' > audit_results.json
+            echo "has_vulnerabilities=false" >> $GITHUB_OUTPUT
+            echo "audit_failed=true" >> $GITHUB_OUTPUT
+          else
+            echo "No vulnerabilities found"
+            echo "has_vulnerabilities=false" >> $GITHUB_OUTPUT
+          fi
+
+          AUDIT_OUTPUT=$(base64 -w 0 audit_results.json)
+          echo "audit_output=$AUDIT_OUTPUT" >> $GITHUB_OUTPUT
 
       - name: Upload audit report
         if: always()
@@ -45,130 +60,226 @@ jobs:
           path: |
             package-lock.json
             package.json
+            audit_results.json
+            audit_error.log
           retention-days: 7
 
-      - name: Create issue if vulnerable
-        if: failure()
+      - name: Process audit results
+        id: process-results
+        if: always() && steps.audit.outputs.audit_output
+        run: |
+          echo '${{ steps.audit.outputs.audit_output }}' | base64 -d > raw_audit_output.json
+
+          cat > process_audit.js << 'EOF'
+          const fs = require('fs');
+
+          try {
+            const rawData = fs.readFileSync('raw_audit_output.json', 'utf8');
+            let auditData;
+            
+            try {
+              auditData = JSON.parse(rawData);
+            } catch (parseError) {
+              console.log('::error::Failed to parse audit JSON: ' + parseError.message);
+              process.exit(1);
+            }
+            
+            if (auditData.error) {
+              console.log('::error::Audit failed: ' + auditData.error);
+              process.exit(1);
+            }
+            
+            const vulnerabilities = auditData.metadata?.vulnerabilities || {};
+            const total = vulnerabilities.total || 0;
+            const critical = vulnerabilities.critical || 0;
+            const high = vulnerabilities.high || 0;
+            const moderate = vulnerabilities.moderate || 0;
+            const low = vulnerabilities.low || 0;
+            
+            console.log(`::set-output name=total::${total}`);
+            console.log(`::set-output name=critical::${critical}`);
+            console.log(`::set-output name=high::${high}`);
+            console.log(`::set-output name=moderate::${moderate}`);
+            console.log(`::set-output name=low::${low}`);
+            
+            const summary = `Critical: ${critical}, High: ${high}, Moderate: ${moderate}, Low: ${low}, Total: ${total}`;
+            console.log(`::set-output name=summary::${summary}`);
+            
+            if (total > 0) {
+              console.log('::warning::Vulnerabilities found: ' + summary);
+            }
+            
+          } catch (error) {
+            console.log('::error::Failed to process audit results: ' + error.message);
+            process.exit(1);
+          }
+          EOF
+
+          echo "::group::Audit Results Processing"
+          node process_audit.js
+          echo "::endgroup::"
+
+      - name: Create security issue
+        if: |
+          always() && 
+          steps.audit.outputs.has_vulnerabilities == 'true' && 
+          github.event_name != 'pull_request'
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const { owner, repo } = context.repo;
+            const runId = context.runId;
+            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${runId}`;
+
+            const total = `${{ steps.process-results.outputs.total }}` || '0';
+            const critical = `${{ steps.process-results.outputs.critical }}` || '0';
+            const high = `${{ steps.process-results.outputs.high }}` || '0';
+            const moderate = `${{ steps.process-results.outputs.moderate }}` || '0';
+            const low = `${{ steps.process-results.outputs.low }}` || '0';
+            const summary = `${{ steps.process-results.outputs.summary }}` || 'Unknown';
+
+            const vulnerabilityDetails = `## Vulnerability Summary
+                
+            | Severity | Count |
+            |----------|-------|
+            | 🔴 Critical | ${critical} |
+            | 🟠 High | ${high} |
+            | 🟡 Moderate | ${moderate} |
+            | 🔵 Low | ${low} |
+            | **Total** | **${total}** |`;
+
             try {
-              const auditOutput = `${{ steps.audit.outputs.audit_output }}`;
-              let auditData = {};
-              let vulnerabilitySummary = 'Unable to parse audit details';
-              
-              try {
-                auditData = JSON.parse(auditOutput);
-                if (auditData.metadata && auditData.metadata.vulnerabilities) {
-                  const vulns = auditData.metadata.vulnerabilities;
-                  vulnerabilitySummary = `Vulnerabilities found:
-                  - Critical: ${vulns.critical || 0}
-                  - High: ${vulns.high || 0}
-                  - Moderate: ${vulns.moderate || 0}
-                  - Low: ${vulns.low || 0}`;
-                }
-              } catch (parseError) {
-                console.error('Failed to parse audit output:', parseError.message);
-                vulnerabilitySummary = 'Failed to parse audit output. Check workflow artifacts for details.';
-              }
-              
-              let existingIssues;
-              try {
-                existingIssues = await github.rest.issues.listForRepo({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  labels: ['security', 'vulnerability'],
-                  state: 'open'
-                });
-              } catch (apiError) {
-                console.error('Failed to fetch existing issues:', apiError.message);
-                existingIssues = { data: [] };
-              }
-              
-              const existingIssue = existingIssues.data.find(issue => 
-                issue.title.includes('Security vulnerabilities detected') || 
-                issue.title.includes('🚨 Security vulnerabilities detected')
+              // Check for existing open security issues
+              const { data: existingIssues } = await github.rest.issues.listForRepo({
+                owner,
+                repo,
+                labels: ['security-audit', 'dependencies'],
+                state: 'open'
+              });
+
+              const existingIssue = existingIssues.find(issue => 
+                issue.title.includes('Security Audit: Vulnerabilities Detected') ||
+                issue.title.includes('npm audit found vulnerabilities')
               );
-              
+
               if (existingIssue) {
-                console.warn('Security issue already exists: #' + existingIssue.number);
-                return;
-              }
-              
-              // Create new issue
-              try {
-                await github.rest.issues.create({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  title: '🚨 Security vulnerabilities detected in dependencies',
-                  body: `## Security Audit Report
+                console.log(`Security issue already exists: #${existingIssue.number}`);
+                
+                // Update existing issue with latest results
+                await github.rest.issues.update({
+                  owner,
+                  repo,
+                  issue_number: existingIssue.number,
+                  body: `## 🔒 Security Audit Update
                   
-                  npm audit found vulnerabilities that require attention.
+                  ${vulnerabilityDetails}
                   
-                  **Vulnerability Summary:**
-                  \`\`\`
-                  ${vulnerabilitySummary}
-                  \`\`\`
+                  **Latest Scan Results:** ${summary}
+                  
+                  **Workflow Run:** [View Run](${runUrl})
+                  **Last Updated:** ${new Date().toISOString()}
                   
                   **Next Steps:**
                   1. Run \`npm audit fix\` to attempt automatic fixes
-                  2. Review the full audit report in the workflow artifacts
-                  3. Update vulnerable dependencies manually if needed
+                  2. Run \`npm audit\` to review detailed findings
+                  3. Manually update dependencies if automatic fixes are insufficient
+                  4. Check the workflow artifacts for complete audit report
                   
-                  **Workflow Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+                  *This issue is automatically updated by the security audit workflow.*`
+                });
+                console.log(`Updated existing issue #${existingIssue.number}`);
+              } else {
+                // Create new issue
+                const { data: newIssue } = await github.rest.issues.create({
+                  owner,
+                  repo,
+                  title: `🔒 Security Audit: Vulnerabilities Detected — ${new Date().toISOString().split('T')[0]}`,
+                  body: `## 🔒 Security Audit Report
+                  
+                  ${vulnerabilityDetails}
+                  
+                  **Workflow Run:** [View Run](${runUrl})
+                  **Detected:** ${new Date().toISOString()}
+                  
+                  **Recommended Actions:**
+                  1. Run \`npm audit fix\` to attempt automatic fixes
+                  2. Run \`npm audit\` to review detailed findings  
+                  3. Manually update vulnerable dependencies if needed
+                  4. Check the workflow artifacts for complete audit report
+                  5. Close this issue once vulnerabilities are resolved
+                  
+                  **Automated Commands:**
+                  \`\`\`bash
+                  # Try automatic fixes
+                  npm audit fix
+                  
+                  # Review remaining issues
+                  npm audit
+                  \`\`\`
                   
                   *This issue was automatically generated by the security audit workflow.*`,
-                  labels: ['security', 'vulnerability', 'automated']
+                  labels: ['security-audit', 'dependencies', 'automated']
                 });
-              } catch (createError) {
-                console.error('Failed to create security issue:', createError.message);
+                console.log(`Created new issue #${newIssue.number}`);
               }
-              
-            } catch (outerError) {
-              console.error('Unexpected error in Create issue step:', outerError.message);
+            } catch (error) {
+              console.log('Error creating/updating issue:', error.message);
             }
 
-      - name: Comment on PR if vulnerable
-        if: failure() && github.event_name == 'pull_request'
+      - name: Comment on PR with vulnerabilities
+        if: |
+          always() && 
+          steps.audit.outputs.has_vulnerabilities == 'true' && 
+          github.event_name == 'pull_request'
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            try {
-              const auditOutput = `${{ steps.audit.outputs.audit_output }}`;
-              let vulnerabilitySummary = '## 🔒 Security Audit Results\n\nSecurity vulnerabilities detected by npm audit. Please run `npm audit` to review and fix these issues before merging.';
-              
-              try {
-                const auditData = JSON.parse(auditOutput);
-                if (auditData.metadata && auditData.metadata.vulnerabilities) {
-                  const vulns = auditData.metadata.vulnerabilities;
-                  vulnerabilitySummary = `## 🔒 Security Audit Results
-                  
-                  Vulnerabilities found in this PR:
-                  - ⚠️ Critical: ${vulns.critical || 0}
-                  - 🔴 High: ${vulns.high || 0}
-                  - 🟡 Moderate: ${vulns.moderate || 0}
-                  - 🔵 Low: ${vulns.low || 0}
-                  
-                  Please run \`npm audit\` to review and fix these issues before merging.`;
-                }
-              } catch (parseError) {
-                console.error('Failed to parse audit output for PR comment:', parseError.message);
-                vulnerabilitySummary = '## 🔒 Security Audit Results\n\nSecurity vulnerabilities detected. Please check the workflow artifacts for detailed audit results.';
-              }
-              
-              try {
-                await github.rest.issues.createComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: context.payload.pull_request.number,
-                  body: vulnerabilitySummary
-                });
-              } catch (commentError) {
-                console.error('Failed to create PR comment:', commentError.message);
-              }
-              
-            } catch (outerError) {
-              console.error('Unexpected error in PR comment step:', outerError.message);
+            const summary = `${{ steps.process-results.outputs.summary }}` || 'Unknown';
+            const total = `${{ steps.process-results.outputs.total }}` || '0';
+            const critical = `${{ steps.process-results.outputs.critical }}` || '0';
+            const high = `${{ steps.process-results.outputs.high }}` || '0';
+
+            let severityIcon = '⚠️';
+            if (parseInt(critical) > 0 || parseInt(high) > 0) {
+              severityIcon = '🚨';
             }
+
+            const commentBody = `## ${severityIcon} Security Audit Results
+
+            **Vulnerabilities detected in this PR:**
+            ${summary}
+
+            **Required Action:**
+            Please address these security vulnerabilities before merging this pull request.
+
+            **Quick Fixes:**
+            \`\`\`bash
+            # Try automatic fixes
+            npm audit fix
+
+            # If that doesn't resolve all issues, try with force
+            npm audit fix --force
+            \`\`\`
+
+            *Note: Be cautious with \`--force\` as it may introduce breaking changes.*`;
+
+            try {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body: commentBody
+              });
+              console.log('Successfully created PR comment');
+            } catch (error) {
+              console.log('Error creating PR comment:', error.message);
+            }
+
+      - name: Show vulnerability warning
+        if: steps.audit.outputs.has_vulnerabilities == 'true'
+        run: |
+          echo "::warning::Security vulnerabilities detected! Check the created issue or PR comment for details."
+          echo "Summary: ${{ steps.process-results.outputs.summary }}"
+          echo "This is a warning - the workflow will continue but please address these vulnerabilities."

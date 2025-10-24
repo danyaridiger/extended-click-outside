@@ -2,21 +2,21 @@
   "name": "extended-click-outside",
   "files": [
     {
-      "path": "dist/index.umd.js",
+      "path": "./dist/index.cjs.js",
       "maxSize": "2 kB"
     },
     {
-      "path": "dist/index.esm.js",
+      "path": "./dist/index.esm.js",
       "maxSize": "2 kB"
     },
     {
-      "path": "dist/index.cjs.js",
+      "path": "./dist/index.umd.js",
       "maxSize": "2 kB"
     }
   ],
   "compression": "gzip",
   "normalization": {
-    "path": ["dist/"],
+    "path": ["./dist/"],
     "stripHash": true
   },
   "settings": {

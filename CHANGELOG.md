@@ -1,6 +1,6 @@
 # Patch notes
 
-Current `extended-click-outside` version: **3.1.3**
+Current `extended-click-outside` version: **3.2.0**
 
 ---
 
@@ -84,10 +84,11 @@ Current `extended-click-outside` version: **3.1.3**
 - Changed eslint version and removed .eslintrc.js configuration file in favor of the new .eslintrc.json configuration file.
 - Changed .gitignore and .npmignore configuration files and added .eslintignore configuration file.
 - Removed "publish" workflow in favor of the new "release" workflow.
+- Renamed "typings" directory to "types" and type declaration file to "index.d.ts".
 
 ### 3.1.0 (2025-10-04)
 
-- Added "@typescript-eslint/eslint-plugin and "rollup-plugin-banner2" dev-dependencies.
+- Added "@typescript-eslint/eslint-plugin" and "rollup-plugin-banner2" dev-dependencies.
 - Added banner with package information to all output variants.
 - Corrected bundle size tresholds in bundlewatch tool.
 - Expanded .eslintrc.json configuration file to provide TypeScript support.
@@ -105,3 +106,17 @@ Current `extended-click-outside` version: **3.1.3**
 ### 3.1.3 (2025-10-04)
 
 - Fixed some syntax of "release" workflow for automatically creating Github releases.
+
+### 3.2.0 (2025-10-22)
+
+- Added "@babel/plugin-transform-runtime" dev-dependency.
+- Eliminated future runtime errors in UMD file output variant by reconfiguring the "babel" plugin for rollup.
+- Fixed audit workflow to resolve errors and permission issues.
+- Fixed dependency workflow to safely update dependencies while preventing hook-related errors.
+- Fixed main documentation and documentation for contributors with more correct paragraphs.
+- Fixed paths in bundlewatch and rollup configurations.
+- Fixed list of extensions in jest, eslint and lint-staged configurations.
+- Removed "@babel/plugin-proposal-class-properties", "@babel/plugin-transform-arrow-functions" and
+  "@babel/plugin-transform-classes" dev-dependencies.
+- Removed unnecessary duplicate blocks from the .eslintrc.json configuration file.
+- Removed unnecessary extensions from Jest coverage configuration.

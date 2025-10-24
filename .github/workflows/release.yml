@@ -103,7 +103,6 @@ jobs:
       - name: Extract latest changelog section for release
         id: extract_changelog
         run: |
-          # Python script to extract the last changelog section
           cat > extract_changelog.py << 'EOF'
           import re
           import sys
@@ -119,16 +118,13 @@ jobs:
                   matches = re.findall(pattern, content, re.MULTILINE | re.DOTALL)
                   
                   if matches:
-                      # Get the last (most recent) section
                       latest_section = matches[-1].strip()
-                      
-                      # Extract just the version number from the header for comparison
                       version_match = re.search(r'^### (\d+\.\d+\.\d+)', latest_section, re.MULTILINE)
+
                       if version_match:
                           changelog_version = version_match.group(1)
                           current_version = "${{ needs.check-commit.outputs.version }}"
                           
-                          # Verify the changelog version matches the release version
                           if changelog_version == current_version:
                               print(latest_section)
                               return True
@@ -151,10 +147,8 @@ jobs:
               exit(0 if success else 1)
           EOF
 
-          # Run the extraction
           python extract_changelog.py > latest_section.md || echo "Extraction failed"
 
-          # Process the result
           if [ -s latest_section.md ]; then
             echo "✅ Found latest changelog section for version ${{ needs.check-commit.outputs.version }}"
             RELEASE_BODY=$(cat latest_section.md)
@@ -166,7 +160,6 @@ jobs:
             echo "❌ No matching changelog section found for version ${{ needs.check-commit.outputs.version }}"
             echo "found=false" >> $GITHUB_OUTPUT
             
-            # Create fallback body - using a different approach to avoid heredoc issues
             FALLBACK_BODY="## v${{ needs.check-commit.outputs.version }}
 
           No changelog entry found for this version in CHANGELOG.md.

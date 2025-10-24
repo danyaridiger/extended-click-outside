@@ -12,7 +12,7 @@ import { setListener, setListenerOnce } from "./utils/listeners";
  * ExtendedClickOutside instance constructor
  * @author Ridiger Daniil Dmitrievich, 2023
  * @class
- * @version 3.1.3
+ * @version 3.2.0
  */
 export default class ExtendedClickOutside {
   _clickName = !document.ontouchstart ? "click" : "touchstart";

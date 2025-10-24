@@ -1,4 +1,5 @@
 type BlockKey = "alt" | "ctrl" | "shift";
+type Callback = (...args: unknown[]) => unknown;
 
 /**
  * Configuration types
@@ -17,11 +18,11 @@ interface ExtendedClickOutsideConfig {
  */
 declare class ExtendedClickOutside {
   private _clickName: string;
-  private _outsideListeners: Map<HTMLElement, Function>;
+  private _outsideListeners: Map<HTMLElement, Callback>;
 
   public init(
     element: HTMLElement,
-    listener: Function,
+    listener: Callback,
     config: ExtendedClickOutsideConfig,
   ): void;
   public remove(element: HTMLElement, useWarnings?: boolean): void;

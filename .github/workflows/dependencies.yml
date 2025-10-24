@@ -35,7 +35,7 @@ jobs:
           npx npm-check-updates -u --target minor
           npm install
 
-      - name: Skip pre-commit hooks for dependency files
+      - name: Skip git hooks and stage changes directly
         run: |
           if [ -f package-lock.json ]; then
             git add package-lock.json
@@ -48,7 +48,7 @@ jobs:
       - name: Check for changes
         id: changes
         run: |
-          if git diff --quiet && git diff --staged --quiet; then
+          if git diff --staged --quiet; then
             echo "has_changes=false" >> $GITHUB_OUTPUT
             echo "No dependency changes detected"
           else

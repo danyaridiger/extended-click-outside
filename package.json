@@ -1,6 +1,6 @@
 {
   "name": "extended-click-outside",
-  "version": "3.1.3",
+  "version": "3.2.0",
   "description": "Advanced outside-click handler for modern web applications",
   "keywords": [
     "dom",
@@ -13,14 +13,14 @@
     "vanillajs",
     "lightweight"
   ],
-  "typings": "./dist/types/index.d.ts",
-  "types": "./dist/types/index.d.ts",
   "files": [
     "dist"
   ],
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.esm.js",
   "unpkg": "./dist/index.umd.js",
+  "typings": "./dist/types/index.d.ts",
+  "types": "./dist/types/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/danyaridiger/extended-click-outside.git"
@@ -33,16 +33,14 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint": "eslint . --ext .js,.ts",
     "prepublishOnly": "npm run build && npm test && npm run lint",
     "prepare": "husky"
   },
   "devDependencies": {
     "@babel/core": "^7.27.7",
     "@babel/eslint-parser": "^7.28.4",
-    "@babel/plugin-proposal-class-properties": "^7.18.6",
-    "@babel/plugin-transform-arrow-functions": "^7.27.1",
-    "@babel/plugin-transform-classes": "^7.27.7",
+    "@babel/plugin-transform-runtime": "^7.28.3",
     "@babel/preset-env": "^7.27.2",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",

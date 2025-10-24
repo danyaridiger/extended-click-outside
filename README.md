@@ -1,11 +1,12 @@
-# extended-click-outside v3.1.3
+# extended-click-outside v3.2.0
 
 ---
 
 ### Brief annotation
 
-**extended-click-outside** is an utility that can help developers with outer click-events handlers registration. To create a handler, it is enough to pass a valid selector to its "init" instance method. Selector also can be an object of type element reference from different frameworks and libraries. Different ways of configuration will help to create customized handlers for specific needs. Such hanlders often used with form controls and interactive shells to specify their properties and behavior depending on their state inactivity.
-An important feature is that one DOM-element can have only single "extended-click-outside" listener. This is done to prevent the web-application from being overloaded with excess handlers. Utility works correctly in browser environment, so it can be useful for web-applications.
+**extended-click-outside** is a utility that assists developers in registering `click-outside` event handlers. To create a handler, simply pass a valid selector to its `init` instance method. This selector can also be an object, such as an element reference from various frameworks and libraries. Multiple configuration options allow you to create customized handlers for specific needs. These handlers are commonly used with form controls and interactive shells to define their properties and behavior based on their inactive state.
+
+An important feature is that a single DOM element can have only one Extended Click Outside listener. This design prevents web applications from being overloaded with redundant handlers. The utility works correctly in all standard browser environments, making it suitable for a wide range of web applications.
 
 ### Installation with npm
 

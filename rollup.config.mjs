@@ -32,11 +32,16 @@ export default [
     plugins: [
       babel({
         exclude: ["./node_modules/**", "./qa/**"],
+        babelHelpers: "runtime",
         plugins: [
-          "@babel/plugin-transform-arrow-functions",
-          "@babel/plugin-proposal-class-properties",
-          "@babel/plugin-transform-classes",
-          "transform-imports",
+          [
+            "@babel/plugin-transform-runtime",
+            {
+              helpers: true,
+              regenerator: false,
+              useESModules: false,
+            },
+          ],
         ],
       }),
       banner(() => {
@@ -55,9 +60,9 @@ export default [
     ],
   },
   {
-    input: "types/index.d.ts",
+    input: "./types/index.d.ts",
     output: {
-      file: "dist/types/index.d.ts",
+      file: "./dist/types/index.d.ts",
       format: "es",
     },
     plugins: [dts()],

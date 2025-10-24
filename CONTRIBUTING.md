@@ -1,6 +1,6 @@
 # Contributing to extended-click-outside
 
-Thank you for considering contributing! We welcome all forms of contributions, including:
+Thank you for considering contributing! I welcome all forms of contributions, including:
 
 - 🐛 Bug reports
 - 🚀 Feature requests
@@ -11,7 +11,7 @@ Thank you for considering contributing! We welcome all forms of contributions, i
 
 ## Before You Start
 
-1. **Read our [Code of Conduct](CODE_OF_CONDUCT.md)** — We enforce it strictly
+1. **Read our [Code of Conduct](CODE_OF_CONDUCT.md)** — I enforce it strictly
 2. **Check existing issues** — Avoid duplicates
 3. **For large changes**, open an issue first to discuss
 
