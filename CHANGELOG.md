@@ -107,7 +107,7 @@ Current `extended-click-outside` version: **3.2.0**
 
 - Fixed some syntax of "release" workflow for automatically creating Github releases.
 
-### 3.2.0 (2025-10-22)
+### 3.2.0 (2025-10-24)
 
 - Added "@babel/plugin-transform-runtime" dev-dependency.
 - Eliminated future runtime errors in UMD file output variant by reconfiguring the "babel" plugin for rollup.
@@ -120,3 +120,7 @@ Current `extended-click-outside` version: **3.2.0**
   "@babel/plugin-transform-classes" dev-dependencies.
 - Removed unnecessary duplicate blocks from the .eslintrc.json configuration file.
 - Removed unnecessary extensions from Jest coverage configuration.
+
+### 3.2.1 (draft)
+
+- Changed line endings in .gitattributes configuration file.

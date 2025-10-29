@@ -37,6 +37,9 @@ jobs:
 
       - name: Skip git hooks and stage changes directly
         run: |
+          # Skip git hooks by using --no-verify
+          git config --local core.hooksPath /dev/null
+
           if [ -f package-lock.json ]; then
             git add package-lock.json
           fi
