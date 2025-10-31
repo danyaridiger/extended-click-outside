@@ -9,7 +9,7 @@ import {
   initSelectors,
   handler,
   passiveHandler,
-} from "../utils/wrappers";
+} from "../tools/wrappers.tool";
 
 let instance;
 const snapshots = ["<div>", '<section style="width: 175px; height: 175px;">'];

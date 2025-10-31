@@ -13,17 +13,17 @@ export default [
     input: "./index.js",
     output: [
       {
-        file: "dist/index.cjs.js",
+        file: "./dist/index.cjs.js",
         format: "cjs",
         sourcemap: true,
       },
       {
-        file: "dist/index.esm.js",
+        file: "./dist/index.esm.js",
         format: "es",
         sourcemap: true,
       },
       {
-        file: "dist/index.umd.js",
+        file: "./dist/index.umd.js",
         format: "umd",
         name: LIB_NAME,
         sourcemap: true,

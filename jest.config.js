@@ -1,5 +1,10 @@
 module.exports = {
-  collectCoverageFrom: ["src/**/*.{js}", "!src/**/*.test.{js}", "!src/**/index.js"],
+  collectCoverageFrom: [
+    "src/**/*.{js}",
+    "src/**/index.js",
+    "!src/**/*.test.{js}",
+    "!src/**/*.tool.{js}",
+  ],
   coverageThreshold: {
     global: {
       branches: 90,
@@ -22,7 +27,7 @@ module.exports = {
     HANDLE_RESULT: false,
   },
   injectGlobals: true,
-  moduleFileExtensions: ["js", "ts", "json", "mjs", "node", "vue"],
+  moduleFileExtensions: ["js", "ts", "json", "mjs", "node"],
   resetModules: true,
   resetMocks: true,
   rootDir: "./",
@@ -31,5 +36,5 @@ module.exports = {
   testEnvironment: "jsdom",
   testLocationInResults: true,
   testMatch: ["**/tests/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[tj]s?(x)"],
-  testPathIgnorePatterns: ["tests/utils"],
+  testPathIgnorePatterns: ["tests/tools/*"],
 };
