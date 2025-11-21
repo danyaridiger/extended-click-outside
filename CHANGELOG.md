@@ -125,5 +125,6 @@ Current `extended-click-outside` version: **3.2.0**
 
 - Changed line endings in .gitattributes configuration file.
 - Changed coverage paths in jest configuration file.
+- Fixed permission issues in dependency update workflow.
 - Renamed unit-tests helper directory from "utils" to "tools".
 - Renamed unit-tests tools with addition of the "tool" postfix.

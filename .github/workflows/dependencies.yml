@@ -97,3 +97,4 @@ jobs:
             patch-updates
             safe-updates
             chore
+          delete-branch: true
