@@ -1,6 +1,6 @@
 {
   "name": "extended-click-outside",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "Advanced outside-click handler for modern web applications",
   "keywords": [
     "dom",

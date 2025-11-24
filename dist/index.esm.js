@@ -1,5 +1,5 @@
 /*!
- * extended-click-outside v3.2.0
+ * extended-click-outside v3.2.1
  * Author: Ridiger Daniil Dmitrievich <extendedmultiselect@yandex.ru>
  * Description: Advanced outside-click handler for modern web applications
  * License: MIT

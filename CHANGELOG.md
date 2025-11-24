@@ -1,6 +1,6 @@
 # Patch notes
 
-Current `extended-click-outside` version: **3.2.0**
+Current `extended-click-outside` version: **3.2.1**
 
 ---
 
@@ -121,7 +121,7 @@ Current `extended-click-outside` version: **3.2.0**
 - Removed unnecessary duplicate blocks from the .eslintrc.json configuration file.
 - Removed unnecessary extensions from Jest coverage configuration.
 
-### 3.2.1 (draft)
+### 3.2.1 (2025-11-24)
 
 - Changed line endings in .gitattributes configuration file.
 - Changed coverage paths in jest configuration file.
