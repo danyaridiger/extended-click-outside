@@ -23,7 +23,7 @@
   "types": "./dist/types/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/danyaridiger/extended-click-outside.git"
+    "url": "git+https://github.com/danyaridiger/extended-click-outside.git"
   },
   "author": "Ridiger Daniil Dmitrievich <extendedmultiselect@yandex.ru>",
   "license": "MIT",
