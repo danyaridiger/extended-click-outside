@@ -2,7 +2,7 @@ name: Dependency Updates
 
 on:
   schedule:
-    - cron: "0 0 1-7 * 1" # Mounthly at 00:00 on Monday
+    - cron: "0 0 1 */3 *" # Monthly (every third month) at 00:00 on the 1st day
   workflow_dispatch:
 
 jobs:
